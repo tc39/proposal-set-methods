@@ -44,7 +44,14 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
 
 ## Alternative
 
-* Add methods to `%SetIteratorPrototype%` and make `Set` methods to use
+* Add methods to `%SetIteratorPrototype%` and make `Set` methods to use them.
+
+```javascript
+Set.prototype.map = function map(fn) {
+    return new Set(this.entries().map(fn)); // sanity checks and proper constructor usage removed for readability purposes
+}
+```
+ 
 
 # Advantages of proposal
 
