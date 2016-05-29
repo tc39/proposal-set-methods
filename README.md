@@ -3,32 +3,61 @@
 Table of Contents
 =================
 
-
-* [Set.isSet](#setisset)
-* [Set.prototype.filter(predicate, thisArg)](#setprototypefilterpredicate-thisarg)
-  * [Polyfill](#polyfill)
-* [Set.prototype.map(func, thisArg)](#setprototypemapfunc-thisarg)
-  * [Polyfill](#polyfill-1)
-  * [Discussion](#discussion)
-* [Set.prototype.some(predicate, thisArg)](#setprototypesomepredicate-thisarg)
-  * [Polyfill](#polyfill-2)
-* [Set.prototype.find(predicate, thisArg)](#setprototypefindpredicate-thisarg)
-  * [Polyfill](#polyfill-3)
-* [Set.prototype.every(predicate, thisArg)](#setprototypeeverypredicate-thisarg)
-  * [Polyfill](#polyfill-4)
-* [Set.prototype.intersect](#setprototypeintersect)
-  * [Discussion](#discussion-1)
-  * [Polyfill (not optimized; single Set)](#polyfill-not-optimized-single-set)
-* [Set.prototype.union](#setprototypeunion)
-  * [Discussion](#discussion-2)
+  * [New Set methods](#new-set-methods)
+  * [Table of Contents](#table-of-contents)
+  * [Revelant previous discussions](#revelant-previous-discussions)
+  * [Why not \xIteratorPrototype\x methods](#why-not-iteratorprototype-methods)
+    * [Alternative](#alternative)
+  * [Advantages of proposal](#advantages-of-proposal)
+  * [Proposal](#proposal)
+    * [Set.isSet](#setisset)
+    * [Set.prototype.filter(predicate, thisArg)](#setprototypefilterpredicate-thisarg)
+      * [Polyfill](#polyfill)
+    * [Set.prototype.map(func, thisArg)](#setprototypemapfunc-thisarg)
+      * [Polyfill](#polyfill-1)
+      * [Discussion](#discussion)
+    * [Set.prototype.some(predicate, thisArg)](#setprototypesomepredicate-thisarg)
+      * [Polyfill](#polyfill-2)
+    * [Set.prototype.find(predicate, thisArg)](#setprototypefindpredicate-thisarg)
+      * [Polyfill](#polyfill-3)
+    * [Set.prototype.every(predicate, thisArg)](#setprototypeeverypredicate-thisarg)
+      * [Polyfill](#polyfill-4)
+    * [Set.prototype.intersect](#setprototypeintersect)
+      * [Discussion](#discussion-1)
+      * [Polyfill (not optimized; single Set)](#polyfill-not-optimized-single-set)
+    * [Set.prototype.union](#setprototypeunion)
+      * [Discussion](#discussion-2)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
+# Revelant previous discussions
 
+* https://github.com/tc39/ecma262/pull/13
+* https://esdiscuss.org/notes/2014-11-19
+* https://esdiscuss.org/topic/map-filter-map-and-more
+
+# Why not `%IteratorPrototype%` methods
+
+* using iterators is verbose - compare `new Set(set.entries().filter(fn))` to `set.filter(fn)`. 19 characters of boilerplate. 
+Even small code base can have hundreds occurrences of this pattern - and hundreds places to make a mistake.
+* iterators seems to be rather ignored in articles/books regarding ES6
+
+## Alternative
+
+* Add methods to `%SetIteratorPrototype%` and make `Set` methods to use
+
+# Advantages of proposal
+
+* it's consistent with already familiar and *widely used* `Array` API (reduced cognitive overhead)
+* reduces need to depend on better endowed [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set) (why do we have to depend on external library to have sane collections?)
+* reduces boilerplate code when dealing with common use cases of `Set`
+* ease transition to using `Set` when refactoring old code using arrays
+
+# Proposal
 
 ## Set.isSet
 
-Not polyfillable. Checks presence of internal property ``[[SetData]]``
+Not polyfillable. Checks presence of internal property ``[[SetData]]``.
 
 
 ## Set.prototype.filter(predicate, thisArg)
@@ -132,7 +161,9 @@ Set.prototype.every = function every(predicate, thisArg=null) {
   * multiple `Sets`
   * single iterable
   * multiple iterables
-Single `Set` seems to be most common use case and it's easiest to optimize (requires `O(MIN(a.size,b.size))` operations).
+
+Single `Set` seems to be most common use case and it's easiest to optimize (requires `O(MIN(a.size,b.size))` operations). Multiple `Sets` are fine too.
+Using "multiple iterables" approach the best achievable complexity is `O(a1.size+a2.size+a3.size+...+an.size)`.
 
 
 ### Polyfill (not optimized; single Set)
@@ -151,6 +182,8 @@ Set.prototype.intersect =  function(otherSet) {
 }
 ```
 
+Optimized code will always iterate smaller set.
+
 ## Set.prototype.union
 `.union` method creates new `Set` instance by mathematical set union operation.
 ![Venn diagram for union](https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Venn0111.svg/384px-Venn0111.svg.png)
@@ -160,5 +193,6 @@ Set.prototype.intersect =  function(otherSet) {
   * multiple `Sets`
   * single iterable
   * multiple iterables
+
 It's preferable to make `.union` method consistent with `.intersect` method.
 
