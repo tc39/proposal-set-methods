@@ -6,7 +6,7 @@ Table of Contents
   * [New Set methods](#new-set-methods)
   * [Table of Contents](#table-of-contents)
   * [Revelant previous discussions](#revelant-previous-discussions)
-  * [Why not \xIteratorPrototype\x methods](#why-not-iteratorprototype-methods)
+  * [Why not %IteratorPrototype% methods](#why-not-iteratorprototype-methods)
     * [Alternative](#alternative)
   * [Advantages of proposal](#advantages-of-proposal)
   * [Proposal](#proposal)
