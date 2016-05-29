@@ -45,7 +45,10 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
 ## Alternative
 
 * Add methods to `%SetIteratorPrototype%` and make `Set` methods to use them.
-
+    * Allows for better optimization for many cases (no intermediate collections)
+    * Can be delayed - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it wouldn't break web 
+    (except for code that subclass `Set` **and** redefines `.entries` method to not use `%SetIteratorPrototype%`)
+    
 ```javascript
 Set.prototype.map = function map(fn) {
     return new Set(this.entries().map(fn)); // sanity checks and proper constructor usage removed for readability purposes
