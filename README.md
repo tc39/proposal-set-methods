@@ -44,10 +44,12 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
 
 ## Alternative
 
-* Add methods to `%SetIteratorPrototype%` and make `Set` methods to use them.
+* Add methods to `%SetIteratorPrototype%` or even more generic `%IteratorPrototype%` and make `Set` methods to use them.
     * Allows for better optimization for many cases (no intermediate collections)
     * Can be delayed - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it wouldn't break web 
     (except for code that subclass `Set` **and** redefines `.entries` method to not use `%SetIteratorPrototype%`)
+    * Preferred method, but standardization can be painful - especially because transpilers doesn't support `%IteratorPrototype%`, so passing "old" transpiled iterator to "new" code can break violently
+    
     
 ```javascript
 Set.prototype.map = function map(fn) {
@@ -206,3 +208,28 @@ Optimized code will always iterate smaller set.
 
 It's preferable to make `.union` method consistent with `.intersect` method.
 
+
+## Set.prototype.xor
+Alternative name: `.symmetricDifference`;
+![Venn diagram for xor](https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Venn0110.svg/384px-Venn0110.svg.png)
+
+Signature issues remain the same as `.union` and `.intersect` methods.
+
+### Polyfill ()
+```javascript
+Set.prototype.xor =  function(otherSet) {
+    assert(Set.isSet(this));
+    assert(Set.isSet(otherSet));
+    const subConstructor = Object.getPrototypeOf(this).constructor[Symbol.species]; // readability
+    const ret = new subConstructor();
+    for(const element of otherSet) {
+        if(!this.has(element))
+           ret.add(element);
+    }
+    for(const element of this) {
+        if(!otherSet.has(element))
+           ret.add(element);
+    }
+    return ret;
+}
+```
