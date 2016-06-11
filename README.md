@@ -5,10 +5,15 @@ Table of Contents
 
   * [New Set methods](#new-set-methods)
   * [Table of Contents](#table-of-contents)
-  * [Revelant previous discussions](#revelant-previous-discussions)
+  * [(Semi)relevant previous discussions](#semirelevant-previous-discussions)
   * [Why not %IteratorPrototype% methods](#why-not-iteratorprototype-methods)
     * [Alternative](#alternative)
   * [Advantages of proposal](#advantages-of-proposal)
+  * [.union, .intersect, .xor, .relativeComplement desired signature](#union-intersect-xor-relativecomplement-desired-signature)
+    * [Single Set](#single-set)
+    * [Multiple Sets](#multiple-sets)
+    * [Single iterable](#single-iterable)
+    * [Multiple iterables](#multiple-iterables)
   * [Proposal](#proposal)
     * [Set.isSet](#setisset)
     * [Set.prototype.filter(predicate, thisArg)](#setprototypefilterpredicate-thisarg)
@@ -23,14 +28,22 @@ Table of Contents
     * [Set.prototype.every(predicate, thisArg)](#setprototypeeverypredicate-thisarg)
       * [Polyfill](#polyfill-4)
     * [Set.prototype.intersect](#setprototypeintersect)
-      * [Discussion](#discussion-1)
-      * [Polyfill (not optimized; single Set)](#polyfill-not-optimized-single-set)
+      * [Polyfill (single Set)](#polyfill-single-set)
     * [Set.prototype.union](#setprototypeunion)
-      * [Discussion](#discussion-2)
+    * [Set.prototype.xor](#setprototypexor)
+      * [Polyfill (single Set)](#polyfill-single-set-1)
+    * [Set.prototype.relativeComplement](#setprototyperelativecomplement)
+      * [Polyfill (single iterable)](#polyfill-single-iterable)
+    * [Set.prototype.addElements](#setprototypeaddelements)
+      * [Polyfill](#polyfill-5)
+    * [Set.prototype.removeElements](#setprototyperemoveelements)
+      * [Polyfill](#polyfill-6)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
-# Revelant previous discussions
+
+
+# (Semi)relevant previous discussions
 
 * https://github.com/tc39/ecma262/pull/13
 * https://esdiscuss.org/notes/2014-11-19
@@ -48,7 +61,8 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
     * Allows for better optimization for many cases (no intermediate collections)
     * Can be delayed - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it wouldn't break web 
     (except for code that subclass `Set` **and** redefines `.entries` method to not use `%SetIteratorPrototype%`)
-    * Preferred method, but standardization can be painful - especially because transpilers doesn't support `%IteratorPrototype%`, so passing "old" transpiled iterator to "new" code can break violently
+    * Preferred method, but standardization can be painful - especially because transpilers doesn't support `%IteratorPrototype%`, 
+    so passing "old" transpiled iterator to "new" code can break violently.
     
     
 ```javascript
@@ -64,6 +78,37 @@ Set.prototype.map = function map(fn) {
 * reduces need to depend on better endowed [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set) (why do we have to depend on external library to have sane collections?)
 * reduces boilerplate code when dealing with common use cases of `Set`
 * ease transition to using `Set` when refactoring old code using arrays
+
+# `.union`, `.intersect`, `.xor`, `.relativeComplement` desired signature
+
+Signature of these functions isn't obvious. They can accept
+* single Set
+* multiple Sets
+* single iterable
+* multiple iterables
+
+## Single Set
+* Most common use case (?)
+* Best possible performance in many cases
+* Inflexible
+
+## Multiple Sets
+* Superior performance to iterables solution
+
+## Single iterable
+* Common use case
+* Quite good performance
+* Similar to [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx)
+
+## Multiple iterables
+* Interoperable with `Immutable.js`
+* Worst performance
+* Can require conversion of it's arguments to Sets.
+
+Single `Set` seems to be most common use case and it's easiest to optimize (requires `O(MIN(a.size,b.size))` operations). Multiple `Sets` are fine too.
+Using "multiple iterables" approach the best achievable complexity is `O(a1.size+a2.size+a3.size+...+an.size)`. 
+
+For consistency with `Immutable.js` it's preferred to allow **multiple iterables**.
 
 # Proposal
 
@@ -87,7 +132,7 @@ Set.prototype.filter = function filter(predicate, thisArg=null) {
             ret.add(element)
         }
     }
-
+    return ret;
 }
 ```
 
@@ -104,7 +149,7 @@ Set.prototype.map = function map(mapFunction, thisArg=null) {
     for(const element of this) {
         ret.add(Reflect.apply(mapFunction, thisArg, [element, element, this]))
     }
-
+    return ret;
 }
 ```
 
@@ -167,21 +212,14 @@ Set.prototype.every = function every(predicate, thisArg=null) {
 ## Set.prototype.intersect
 `.intersect` method creates new `Set` instance by mathematical set intersect operation.
 ![Venn diagram for intersect](https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Venn0001.svg/384px-Venn0001.svg.png)
-### Discussion
-* `.intersect` signature is matter of convention. It can accept:
-  * single `Set`
-  * multiple `Sets`
-  * single iterable
-  * multiple iterables
-
-Single `Set` seems to be most common use case and it's easiest to optimize (requires `O(MIN(a.size,b.size))` operations). Multiple `Sets` are fine too.
-Using "multiple iterables" approach the best achievable complexity is `O(a1.size+a2.size+a3.size+...+an.size)`.
 
 
-### Polyfill (not optimized; single Set)
+
+
+### Polyfill (single Set)
 
 ```javascript
-Set.prototype.intersect =  function(otherSet) {
+Set.prototype.intersect = function intersect(otherSet) {
     assert(Set.isSet(this));
     assert(Set.isSet(otherSet));
     const subConstructor = Object.getPrototypeOf(this).constructor[Symbol.species]; // readability
@@ -191,23 +229,13 @@ Set.prototype.intersect =  function(otherSet) {
             ret.add(element);
         }
     }
+    return ret;
 }
 ```
-
-Optimized code will always iterate smaller set.
 
 ## Set.prototype.union
 `.union` method creates new `Set` instance by mathematical set union operation.
 ![Venn diagram for union](https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Venn0111.svg/384px-Venn0111.svg.png)
-### Discussion
-* `.union` signature is matter of convention. It can accept:
-  * single `Set`
-  * multiple `Sets`
-  * single iterable
-  * multiple iterables
-
-It's preferable to make `.union` method consistent with `.intersect` method.
-
 
 ## Set.prototype.xor
 Alternative name: `.symmetricDifference`;
@@ -215,7 +243,7 @@ Alternative name: `.symmetricDifference`;
 
 Signature issues remain the same as `.union` and `.intersect` methods.
 
-### Polyfill ()
+### Polyfill (single Set)
 ```javascript
 Set.prototype.xor =  function(otherSet) {
     assert(Set.isSet(this));
@@ -233,3 +261,53 @@ Set.prototype.xor =  function(otherSet) {
     return ret;
 }
 ```
+
+
+## Set.prototype.relativeComplement
+`.relativeComplement` method constructs new `Set`, relative complement of argument to `this`.
+![Venn diagram for relativeComplement](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Venn0010.svg/384px-Venn0010.svg.png)
+
+### Polyfill (single iterable)
+```javascript
+Set.prototype.relativeComplement = function relativeComplement(iterable) {
+    assert(Set.isSet(this));
+    const subConstructor = Object.getPrototypeOf(this).constructor[Symbol.species]; // readability
+    const ret = new subConstructor(this);
+    for(const element of iterable) {
+        if(ret.has(element))
+           ret.delete(element);
+    }
+    return ret;
+}
+```
+
+## Set.prototype.addElements
+`.addElements` add all of it's argument to current `Set`.
+
+### Polyfill
+
+```javascript
+Set.prototype.addElements = function addElements(...args) {
+    assert(Set.isSet(this));
+    for(const element of args) {
+        this.add(element);
+    }
+    return this;
+}
+```
+
+## Set.prototype.removeElements
+`.removeElements` is easy way to remove many elements from `Set`.
+
+### Polyfill
+
+```javascript
+Set.prototype.removeElements = function removeElements(...args) {
+    assert(Set.isSet(this));
+    for(const element of args) {
+        this.remove(element);
+    }
+    return this;
+}
+```
+
