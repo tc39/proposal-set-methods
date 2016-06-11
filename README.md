@@ -214,8 +214,6 @@ Set.prototype.every = function every(predicate, thisArg=null) {
 ![Venn diagram for intersect](https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Venn0001.svg/384px-Venn0001.svg.png)
 
 
-
-
 ### Polyfill (single Set)
 
 ```javascript
@@ -240,8 +238,6 @@ Set.prototype.intersect = function intersect(otherSet) {
 ## Set.prototype.xor
 Alternative name: `.symmetricDifference`;
 ![Venn diagram for xor](https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Venn0110.svg/384px-Venn0110.svg.png)
-
-Signature issues remain the same as `.union` and `.intersect` methods.
 
 ### Polyfill (single Set)
 ```javascript
