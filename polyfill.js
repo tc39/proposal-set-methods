@@ -3,18 +3,13 @@ function getSpeciesConstructor(obj) {
 }
 
 function isSet(obj) {
+    const methodNames = ['has', 'add', 'forEach', 'delete', 'keys', 'values', 'entries'];
     return !!(
         obj &&
-        'has' in obj &&
-        'add' in obj &&
-        'forEach' in obj &&
-        ('remove' in obj) &&
-        (Reflect.has(obj, 'size')) &&
-        (typeof obj.has === 'function') &&
-        (typeof obj.add === 'function') &&
-        (typeof obj.remove === 'function') &&
-        (typeof obj.size === 'number') &&
-        (Number.isInteger(obj.size))
+        methodNames.every(key=>key in obj && typeof obj[key] === 'function') &&
+        'size' in obj &&
+        typeof obj.size === 'number' &&
+        Number.isInteger(obj.size)
     );
 }
 
@@ -22,15 +17,18 @@ function relativeComplement(iterable) {
     assert(Set.isSet(this));
     const subConstructor = Object.getPrototypeOf(this).constructor[Symbol.species]; // readability
     const ret = new subConstructor(this);
-    for(const element of iterable) {
-        if(ret.has(element))
+    for (const element of iterable) {
+        if (ret.has(element)) {
             ret.delete(element);
+        }
     }
     return ret;
 }
 
 function assert(val) {
-    if (!val) throw new Error();
+    if (!val) {
+        throw new Error();
+    }
 }
 
 function filter(predicate, thisArg = null) {
@@ -46,7 +44,7 @@ function filter(predicate, thisArg = null) {
 }
 
 function map(mapFunction, thisArg = null) {
-    assert(typeof predicate === 'function');
+    assert(typeof mapFunction === 'function');
     assert(isSet(this));
     const ret = new (getSpeciesConstructor(this));
     for (const element of this) {
@@ -55,71 +53,85 @@ function map(mapFunction, thisArg = null) {
     return ret;
 }
 
-function some(predicate, thisArg=null) {
+function some(predicate, thisArg = null) {
     assert(typeof predicate === 'function');
     assert(isSet(this));
-    for(const element of this) {
-        if(Reflect.apply(predicate, thisArg, [element, element, this])) {
+    for (const element of this) {
+        if (Reflect.apply(predicate, thisArg, [element, element, this])) {
             return true;
         }
     }
     return false;
 }
 
-function find(predicate, thisArg=null) {
+function find(predicate, thisArg = null) {
     assert(typeof predicate === 'function');
     assert(isSet(this));
-    for(const element of this) {
-        if(Reflect.apply(predicate, thisArg, [element, element, this])) {
+    for (const element of this) {
+        if (Reflect.apply(predicate, thisArg, [element, element, this])) {
             return element;
         }
     }
     return undefined;
 }
 
-function every(predicate, thisArg=null) {
+function every(predicate, thisArg = null) {
     assert(typeof predicate === 'function');
     assert(isSet(this));
-    for(const element of this) {
-        if(!Reflect.apply(predicate, thisArg, [element, element, this])) {
+    for (const element of this) {
+        if (!Reflect.apply(predicate, thisArg, [element, element, this])) {
             return false;
         }
     }
     return true;
 }
 
-function intersect(otherSet) {
+function union(...iterables) {
     assert(isSet(this));
-    assert(isSet(otherSet));
     const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor();
-    for(const element of this) {
-        if(otherSet.has(element)) {
+    const setIterables = [this].concat(iterables);
+    for (const _set of setIterables) {
+        for (const element of _set) {
             ret.add(element);
         }
     }
     return ret;
 }
 
-function xor(otherSet) {
+function intersect(...iterables) {
     assert(isSet(this));
-    assert(isSet(otherSet));
+    const subConstructor = getSpeciesConstructor(this);
+    const ret = new subConstructor();
+    const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
+    for (const _set of setIterables) {
+        for (const element of _set) {
+            if (setIterables.every(_set=>_set.has(element))) {
+                ret.add(element);
+            }
+        }
+    }
+    return ret;
+}
+
+function xor(...iterables) {
+    assert(isSet(this));
     const subConstructor = getSpeciesConstructor(this); // readability
     const ret = new subConstructor();
-    for(const element of otherSet) {
-        if(!this.has(element))
-            ret.add(element);
-    }
-    for(const element of this) {
-        if(!otherSet.has(element))
-            ret.add(element);
+    const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
+    for (const _set of setIterables) {
+        for (const element of _set) {
+            if (setIterables.filter(_set=>_set.has(element)).length === 1) {
+                ret.add(element);
+            }
+        }
     }
     return ret;
 }
 
 function addElements(...args) {
     assert(isSet(this));
-    for(const element of args) {
+    for (const element of args) {
         this.add(element);
     }
     return this;
@@ -127,7 +139,7 @@ function addElements(...args) {
 
 function removeElements(...args) {
     assert(isSet(this));
-    for(const element of args) {
+    for (const element of args) {
         this.remove(element);
     }
     return this;
