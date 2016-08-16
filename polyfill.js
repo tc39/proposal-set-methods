@@ -1,5 +1,11 @@
+function assert(val, err=new Error()) {
+    if (!val) {
+        throw err;
+    }
+}
+
 function getSpeciesConstructor(obj) {
-    return Object.getPrototypeOf(this).constructor[Symbol.species];
+    return obj.constructor[Symbol.species];
 }
 
 function isSet(obj) {
@@ -14,8 +20,8 @@ function isSet(obj) {
 }
 
 function relativeComplement(iterable) {
-    assert(Set.isSet(this));
-    const subConstructor = Object.getPrototypeOf(this).constructor[Symbol.species]; // readability
+    assert(isSet(this));
+    const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor(this);
     for (const element of iterable) {
         if (ret.has(element)) {
@@ -25,19 +31,13 @@ function relativeComplement(iterable) {
     return ret;
 }
 
-function assert(val) {
-    if (!val) {
-        throw new Error();
-    }
-}
-
 function filter(predicate, thisArg = null) {
     assert(typeof predicate === 'function');
     assert(isSet(this));
     const ret = new (getSpeciesConstructor(this));
     for (const element of this) {
         if (Reflect.apply(predicate, thisArg, [element, element, this])) {
-            ret.add(element)
+            ret.add(element);
         }
     }
     return ret;
@@ -101,6 +101,7 @@ function union(...iterables) {
 
 function intersect(...iterables) {
     assert(isSet(this));
+    assert(iterables.length > 0);
     const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor();
     const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
@@ -157,7 +158,8 @@ export default function polyfill(Set) {
         ['find', find],
         ['relativeComplement', relativeComplement],
         ['addElements', addElements],
-        ['removeElements', removeElements]
+        ['removeElements', removeElements],
+        ['union', union]
     ];
     const staticMethods = [
         ['isSet', isSet]
