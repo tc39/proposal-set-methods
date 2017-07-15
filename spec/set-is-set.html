@@ -1,0 +1,10 @@
+<p>When the `isSet` method is called, the following steps are taken:</p>
+
+<emu-alg>
+    1. If Type(_argument_) is not Object, return *false*.
+    1. If _argument_ is a Set exotic object return *true*.
+    1. If _argument_ does have a [[SetData]] internal slot return *true*.
+    1. Return *false*.
+</emu-alg>
+
+<p>The `length` property of the `isSet` method is *1*.</p>

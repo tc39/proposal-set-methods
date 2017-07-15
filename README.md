@@ -1,5 +1,7 @@
 # New Set methods
 
+See [formal spec WIP](https://ginden.github.io/set-methods).
+
 Table of Contents
 =================
 
