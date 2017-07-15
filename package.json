@@ -2,7 +2,7 @@
   "private": true,
   "name": "proposal-set-methods",
   "description": "New Set methods proposal for JavaScript (build setup only)",
-  "license": "MIT",
+  "license": "Fair",
   "scripts": {
     "spec": "ecmarkup spec/index.html docs/index.html --js docs/ecmarkup.js --css docs/ecmarkup.css",
     "watch": "ecmarkup --watch spec/index.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css"
