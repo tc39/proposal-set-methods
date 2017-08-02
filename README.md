@@ -49,12 +49,13 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
 
 * Add methods to `%SetIteratorPrototype%` or even more generic `%IteratorPrototype%` and make `Set` methods to use them.
     * Allows for better optimization for many cases (no intermediate collections)
-    * **Can be delayed** - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it wouldn't break web
-    (except for code that subclass `Set` **and** redefines `.entries` method to not use `%SetIteratorPrototype%`)
-   * Preferred method, but standardization can be painful - especially because transpilers doesn't support `%IteratorPrototype%`,
-    so passing "old" transpiled iterator to "new" code can break violently.
+    * **Can be delayed** - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it's unlikely to break the web
+        * Code that subclass `Set` **and** redefines `@@iterator` to not use `%SetIteratorPrototype%`
+   * Theoretically preferred method, but standardization would be painful - especially because transpilers doesn't support `%IteratorPrototype%`,
+    so passing "old" transpiled iterator to "new" code will break.
     
-    
+Example
+
 ```javascript
 Set.prototype.map = function map(fn) {
     return new Set(this.entries().map(fn)); // sanity checks and proper constructor usage removed for readability purposes
@@ -68,6 +69,7 @@ Set.prototype.map = function map(fn) {
 * reduces need to depend on [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set) (why do we have to depend on external library to have sane collections?)
 * reduces boilerplate code when dealing with common use cases of `Set`
 * ease transition to using `Set` when refactoring old code using arrays
+* no new syntax
 
 # `.union`, `.intersect`, `.xor`, `.relativeComplement` desired signature
 
@@ -144,4 +146,4 @@ Alternative name: `.symmetricDifference`;
 `.removeElements` is easy way to remove many elements from `Set`.
 
 ## Set.isSupersetOf(iterable)
-Checks if `this` is superset of `iterable`
+Checks if `this` is superset of `iterable`. Returns boolean.
