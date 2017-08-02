@@ -5,7 +5,8 @@
   "license": "Fair",
   "scripts": {
     "spec": "ecmarkup spec/index.html docs/index.html --js docs/ecmarkup.js --css docs/ecmarkup.css",
-    "watch": "ecmarkup --watch spec/index.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css"
+    "watch": "ecmarkup --watch spec/index.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css",
+    "test":"mocha -r ./polyfill.js test/*.spec.js"
   },
   "devDependencies": {
     "ecmarkup": "^3.11.2"
@@ -20,5 +21,9 @@
   "bugs": {
     "url": "https://github.com/Ginden/set-methods/issues"
   },
-  "homepage": "https://github.com/Ginden/set-methods#readme"
+  "homepage": "https://github.com/Ginden/set-methods#readme",
+  "dependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.5.0"
+  }
 }

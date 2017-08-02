@@ -65,7 +65,7 @@ Set.prototype.map = function map(fn) {
 # Advantages of proposal
 
 * it's consistent with already familiar and *widely used* `Array` API (reduced cognitive overhead)
-* reduces need to depend on better endowed [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set) (why do we have to depend on external library to have sane collections?)
+* reduces need to depend on [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set) (why do we have to depend on external library to have sane collections?)
 * reduces boilerplate code when dealing with common use cases of `Set`
 * ease transition to using `Set` when refactoring old code using arrays
 
@@ -79,7 +79,7 @@ Signature of these functions isn't obvious. They can accept
 
 ## Single Set
 * Most common use case (?)
-* Best possible performance in many cases
+* Best possible performance in many cases in certain cases
 * Inflexible
 
 ## Multiple Sets
@@ -87,25 +87,26 @@ Signature of these functions isn't obvious. They can accept
 
 ## Single iterable
 * Common use case
-* Quite good performance
 * Similar to [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx)
 
 ## Multiple iterables
 * Interoperable with `Immutable.js`
-* Worst performance
 * Can require conversion of it's arguments to Sets.
 
-Single `Set` seems to be most common use case and it's easiest to optimize (requires `O(MIN(a.size,b.size))` operations).
+Single `Set` should be easiest to optimize (requires `O(MIN(a.size,b.size))` operations).
+
 Using "multiple iterables" approach the best achievable complexity is `O(a1.size+a2.size+a3.size+...+an.size)`. 
 
-For consistency with `Immutable.js` it's preferred to allow **multiple iterables**. Currently polyfill supports only multiple iterables.
+Single iterable approach is simplistic and solves most common use cases.
+
+For consistency with `Immutable.js` it's preferred to choose **multiple iterables**.
 
 # Proposal
 
 ## Set.isSet
 
-Not polyfillable. Checks presence of internal property ``[[SetData]]``. [Source code for hacky way](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L11).
 
+Not polyfillable. Checks presence of internal property ``[[SetData]]``. [Source code for hacky way](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L11).
 
 ## Set.prototype.filter(predicate, thisArg)
 `.filter` method creates new `Set` instance that doesn't contain elements that doesn't match predicate.
@@ -115,63 +116,32 @@ Not polyfillable. Checks presence of internal property ``[[SetData]]``. [Source 
 `.map` method creates new `Set` instance with the results of calling a provided function on every element in this set.
 * [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L46)
 
-
-### Discussion
-* `source.size` doesn't have to equal `result.size`. This can be confusing to some developers.
-
-
 ## Set.prototype.some(predicate, thisArg)
 `.some` method is analogous to `Array.prototype.some`.
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L56)
-
 
 ## Set.prototype.find(predicate, thisArg)
 `.find` method is analogous to `Array.prototype.find`.
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L67)
 
 ## Set.prototype.every(predicate, thisArg)
 `.every` method is analogous to `Array.prototype.every`.
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L86)
 
-## Set.prototype.intersect
+## Set.prototype.intersect(...iterables)
 `.intersect` method creates new `Set` instance by mathematical set intersect operation.
 
-![Venn diagram for intersect](https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Venn0001.svg/384px-Venn0001.svg.png)
-
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L102)
-
-## Set.prototype.union
+## Set.prototype.union(...iterables)
 `.union` method creates new `Set` instance by mathematical set union operation.
-
-![Venn diagram for union](https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Venn0111.svg/384px-Venn0111.svg.png)
-
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L89)
-
 
 ## Set.prototype.xor
 Alternative name: `.symmetricDifference`;
 
-![Venn diagram for xor](https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Venn0110.svg/384px-Venn0110.svg.png)
+## Set.prototype.minus(...iterables)
+`.minus` method constructs new `Set` without elements present in iterables.
 
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L118)
+## Set.prototype.addElements(...elements)
+`.addElements` add all of it's arguments to current `Set`.
 
-
-
-## Set.prototype.relativeComplement
-`.relativeComplement` method constructs new `Set`, relative complement of argument to `this`.
-
-![Venn diagram for relativeComplement](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Venn0010.svg/384px-Venn0010.svg.png)
-
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L22)
-
-
-## Set.prototype.addElements
-`.addElements` add all of it's argument to current `Set`.
-
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L133)
-
-
-## Set.prototype.removeElements
+## Set.prototype.removeElements(...elements)
 `.removeElements` is easy way to remove many elements from `Set`.
 
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L141)
+## Set.isSupersetOf(iterable)
+Checks if `this` is superset of `iterable`

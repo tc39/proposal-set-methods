@@ -1,4 +1,6 @@
-function assert(val, err=new Error()) {
+'use strict';
+
+function assert(val, err=new TypeError()) {
     if (!val) {
         throw err;
     }
@@ -19,15 +21,18 @@ function isSet(obj) {
     );
 }
 
-function relativeComplement(iterable) {
+function subtract(...iterables) {
     assert(isSet(this));
     const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor(this);
-    for (const element of iterable) {
-        if (ret.has(element)) {
-            ret.delete(element);
+    for(const iterable of iterables) {
+        for (const element of iterable) {
+            if (ret.has(element)) {
+                ret.delete(element);
+            }
         }
     }
+
     return ret;
 }
 
@@ -88,6 +93,7 @@ function every(predicate, thisArg = null) {
 
 function union(...iterables) {
     assert(isSet(this));
+    assert(iterables.length > 0);
     const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor();
     const setIterables = [this].concat(iterables);
@@ -104,7 +110,7 @@ function intersect(...iterables) {
     assert(iterables.length > 0);
     const subConstructor = getSpeciesConstructor(this);
     const ret = new subConstructor();
-    const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
+    const setIterables = [this, ...iterables].map(iterable => new subConstructor(iterable));
     for (const _set of setIterables) {
         for (const element of _set) {
             if (setIterables.every(_set=>_set.has(element))) {
@@ -117,6 +123,7 @@ function intersect(...iterables) {
 
 function xor(...iterables) {
     assert(isSet(this));
+    assert(iterables.length > 0);
     const subConstructor = getSpeciesConstructor(this); // readability
     const ret = new subConstructor();
     const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
@@ -141,38 +148,47 @@ function addElements(...args) {
 function removeElements(...args) {
     assert(isSet(this));
     for (const element of args) {
-        this.remove(element);
+        this.delete(element);
     }
     return this;
 }
 
-export default function polyfill(Set) {
-    assert(typeof Set === 'function');
-    const prototypeMethods = [
-        ['map', map],
-        ['filter', filter],
-        ['some', some],
-        ['xor', xor],
-        ['intersect', intersect],
-        ['every', every],
-        ['find', find],
-        ['relativeComplement', relativeComplement],
-        ['addElements', addElements],
-        ['removeElements', removeElements],
-        ['union', union]
-    ];
-    const staticMethods = [
-        ['isSet', isSet]
-    ];
-    for (const [key, value] of prototypeMethods) {
-        Object.defineProperty(Set.prototype, key, {
-            value
-        });
+function isSupersetOf(iterable) {
+    assert(isSet(this));
+    for (const element of iterable) {
+        if(!this.has(element)) {
+            return false;
+        }
     }
-    for (const [key, value] of staticMethods) {
-        Object.defineProperty(Set, key, {
-            value
-        });
-    }
-    return Set;
+    return true;
+}
+
+
+assert(typeof Set === 'function');
+const prototypeMethods = [
+    ['map', map],
+    ['filter', filter],
+    ['some', some],
+    ['xor', xor],
+    ['intersect', intersect],
+    ['every', every],
+    ['find', find],
+    ['subtract', subtract],
+    ['addElements', addElements],
+    ['removeElements', removeElements],
+    ['union', union],
+    ['isSupersetOf', isSupersetOf]
+];
+const staticMethods = [
+    ['isSet', isSet]
+];
+for (const [key, value] of prototypeMethods) {
+    Object.defineProperty(Set.prototype, key, {
+        value
+    });
+}
+for (const [key, value] of staticMethods) {
+    Object.defineProperty(Set, key, {
+        value
+    });
 }
