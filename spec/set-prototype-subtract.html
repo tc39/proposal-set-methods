@@ -1,1 +1,31 @@
-<h2>TBA</h2>
+<p>When the `subtract` method is called, the following steps are taken:</p>
+
+<emu-alg>
+    1. Let _len_ be the actual number of arguments passed to this function.
+    2. Let _items_ be the List of arguments passed to this function.
+    3. Let _S_ be the *this* value.
+    4. Let _k_ be 0.
+    6. Let _C_ be ? Get(_S_, "constructor").
+    7. If IsConstructor(_C_) is true, then
+        1. Let _A_ be ? Construct(_C_, « _S »)
+    8. Else,
+        1. Throw a *TypeError* exception.
+    9. Let _remover_ be ? Get(_A_, "delete").
+    10. If IsCallable(_remover_) is *false*, throw a *TypeError* exception.
+    11. Repeat while _k_ < _len_
+        1. Let _iterable_ be _items_[_k_].
+        2. Let _iter_ be GetIterator(_iterable_).
+        3. If _iter_ is undefined, throw a *TypeError* exception.
+        4. Repeat,
+            1. Let _next_ be IteratorStep(_iter_).
+            2. If _next_ is *false*, exit innermost loop.
+            3. Let _nextValue_ be ? IteratorValue(_next_).
+            4. Let _status_ be Call(_remover_, _A_, « _nextValue_.[[Value]] »)
+            5. If _status_ is an abrupt completion, return IteratorClose(_iter_, _status_)
+            5. Increase _k_ by 1.
+        12. Return _A_.
+
+
+</emu-alg>
+
+<p>The `length` property of the `union` method is *1*.</p>
