@@ -153,15 +153,6 @@ function removeElements(...args) {
     return this;
 }
 
-function isSupersetOf(iterable) {
-    assert(isSet(this));
-    for (const element of iterable) {
-        if(!this.has(element)) {
-            return false;
-        }
-    }
-    return true;
-}
 
 
 assert(typeof Set === 'function');
@@ -176,8 +167,7 @@ const prototypeMethods = [
     ['subtract', subtract],
     ['addElements', addElements],
     ['removeElements', removeElements],
-    ['union', union],
-    ['isSupersetOf', isSupersetOf]
+    ['union', union]
 ];
 const staticMethods = [
     ['isSet', isSet]
