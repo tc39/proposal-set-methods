@@ -2,43 +2,13 @@
 
 See [formal spec WIP](https://ginden.github.io/set-methods/).
 
-Table of Contents
-=================
-
-  * [New Set methods](#new-set-methods)
-  * [Table of Contents](#table-of-contents)
-  * [(Semi)relevant previous discussions](#semirelevant-previous-discussions)
-  * [Why not %IteratorPrototype% methods](#why-not-iteratorprototype-methods)
-    * [Alternative](#alternative)
-  * [Advantages of proposal](#advantages-of-proposal)
-  * [.union, .intersect, .xor, .relativeComplement desired signature](#union-intersect-xor-relativecomplement-desired-signature)
-    * [Single Set](#single-set)
-    * [Multiple Sets](#multiple-sets)
-    * [Single iterable](#single-iterable)
-    * [Multiple iterables](#multiple-iterables)
-  * [Proposal](#proposal)
-    * [Set.isSet](#setisset)
-    * [Set.prototype.filter(predicate, thisArg)](#setprototypefilterpredicate-thisarg)
-    * [Set.prototype.map(func, thisArg)](#setprototypemapfunc-thisarg)
-      * [Discussion](#discussion)
-    * [Set.prototype.some(predicate, thisArg)](#setprototypesomepredicate-thisarg)
-    * [Set.prototype.find(predicate, thisArg)](#setprototypefindpredicate-thisarg)
-    * [Set.prototype.every(predicate, thisArg)](#setprototypeeverypredicate-thisarg)
-    * [Set.prototype.intersect](#setprototypeintersect)
-    * [Set.prototype.union](#setprototypeunion)
-    * [Set.prototype.xor](#setprototypexor)
-    * [Set.prototype.relativeComplement](#setprototyperelativecomplement)
-    * [Set.prototype.addElements](#setprototypeaddelements)
-    * [Set.prototype.removeElements](#setprototyperemoveelements)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-
 # (Semi)relevant previous discussions
 
 * [Map#map and Map#filter](https://github.com/tc39/ecma262/pull/13)
 * [Map.prototype.map and Map.prototype.filter (spec) + Set](https://esdiscuss.org/notes/2014-11-19)
 * [Map: filter/map and more](https://esdiscuss.org/topic/map-filter-map-and-more)
 * [Original topic regarding this proposal](https://esdiscuss.org/topic/new-set-prototype-methods)
+* [Newer topic regarding this proposal](https://esdiscuss.org/topic/new-set-methods-again)
 
 # Why not `%IteratorPrototype%` methods
 
@@ -51,8 +21,6 @@ Even small code base can have hundreds occurrences of this pattern - and hundred
     * Allows for better optimization for many cases (no intermediate collections)
     * **Can be delayed** - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it's unlikely to break the web
         * Code that subclass `Set` **and** redefines `@@iterator` to not use `%SetIteratorPrototype%`
-   * Theoretically preferred method, but standardization would be painful - especially because transpilers doesn't support `%IteratorPrototype%`,
-    so passing "old" transpiled iterator to "new" code will break.
     
 Example
 
@@ -80,43 +48,33 @@ Signature of these functions isn't obvious. They can accept
 * multiple iterables
 
 ## Single Set
-* Most common use case (?)
-* Best possible performance in many cases in certain cases
+
+* Best possible performance possible
 * Inflexible
 
-## Multiple Sets
-* Superior performance to iterables solution
-
 ## Single iterable
-* Common use case
-* Similar to [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx)
+* Most common use case (?)
+* Already used in eg. [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx)
 
 ## Multiple iterables
-* Interoperable with `Immutable.js`
-* Can require conversion of it's arguments to Sets.
-
-Single `Set` should be easiest to optimize (requires `O(MIN(a.size,b.size))` operations).
-
-Using "multiple iterables" approach the best achievable complexity is `O(a1.size+a2.size+a3.size+...+an.size)`. 
-
-Single iterable approach is simplistic and solves most common use cases.
-
-For consistency with `Immutable.js` it's preferred to choose **multiple iterables**.
+* Similar to `Immutable.js`
+* Can require conversion of it's arguments to Sets for performance reasons
 
 # Proposal
 
+This proposal does not change grammar of language. 
+
+New methods are added to objects `Set` and `Set.prototype`.
+
 ## Set.isSet
 
-
-Not polyfillable. Checks presence of internal property ``[[SetData]]``. [Source code for hacky way](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L11).
+Checks presence of internal property ``[[SetData]]``.
 
 ## Set.prototype.filter(predicate, thisArg)
 `.filter` method creates new `Set` instance that doesn't contain elements that doesn't match predicate.
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L34)
 
 ## Set.prototype.map(func, thisArg)
 `.map` method creates new `Set` instance with the results of calling a provided function on every element in this set.
-* [Code](https://github.com/Ginden/set-methods/blob/master/polyfill.js#L46)
 
 ## Set.prototype.some(predicate, thisArg)
 `.some` method is analogous to `Array.prototype.some`.
@@ -133,17 +91,14 @@ Not polyfillable. Checks presence of internal property ``[[SetData]]``. [Source 
 ## Set.prototype.union(...iterables)
 `.union` method creates new `Set` instance by mathematical set union operation.
 
-## Set.prototype.xor
-Alternative name: `.symmetricDifference`;
+## Set.prototype.xor(...iterables)
+Alternative name: `.symmetricDifference`; Returns elements found only in one of `[this, ...iterables]`
 
-## Set.prototype.minus(...iterables)
-`.minus` method constructs new `Set` without elements present in iterables.
+## Set.prototype.subtract(...iterables)
+`.subtract` method constructs new `Set` without elements present in `iterables`.
 
 ## Set.prototype.addElements(...elements)
-`.addElements` add all of it's arguments to current `Set`.
+`.addElements` adds many elements to `Set` instance mutating it.
 
 ## Set.prototype.removeElements(...elements)
-`.removeElements` is easy way to remove many elements from `Set`.
-
-## Set.isSupersetOf(iterable)
-Checks if `this` is superset of `iterable`. Returns boolean.
+`.removeElements` removes many elements from `Set` instance, mutating it.

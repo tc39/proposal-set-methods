@@ -2,24 +2,24 @@
 
 
 <emu-alg>
-    1. Let _S_ be the *this* value.
-    2. If Type(_S_) is not Object, throw a *TypeError* exception.
-    3. If _S_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
-    4. If IsCallable(_callbackfn_) is false, throw a *TypeError* exception.
-    5. If _thisArg_ was supplied, let _T_ be _thisArg_; else let _T_ be *undefined*.
-    6. Let _C_ be ? Get(_S_, "constructor").
-    7. If IsConstructor(_C_) is true, then
-        1. Let _A_ be ? Construct(_C_)
-    8. Else,
+    1. Let _set_ be the *this* value.
+        1. If Type(_set_) is not Object, throw a *TypeError* exception.
+        2. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
+    3. If IsCallable(_callbackfn_) is false, throw a *TypeError* exception.
+    4. If _thisArg_ was supplied, let _T_ be _thisArg_; else let _T_ be *undefined*.
+    5. Let _Ctr_ be ? Get(_set_, "constructor").
+    6. If IsConstructor(_Ctr_) is true, then
+        1. Let _newSet_ be ? Construct(_Ctr_)
+    7. Else,_A_
         1. Throw a *TypeError* exception.
-    9. Let _adder_ be ? Get(_A_, "add")
-    10. If IsCallable(_adder_) is *false*, throw a *TypeError* exception.
-    11. Let _entries_ be the List that is _S_.[[SetData]]
-    12. For each _e_ that is an element of _entries_, in original insertion order, do:
+    8. Let _adder_ be ? Get(_newSet_, "add")
+    9. If IsCallable(_adder_) is *false*, throw a *TypeError* exception.
+    10. Let _entries_ be the List that is _set_.[[SetData]]
+    11. For each _e_ that is an element of _entries_, in original insertion order, do:
         1. If _e_ is not `empty`, then
-            1. Let _selected_ be ToBoolean(? Call(_callbackfn_, _T_, « _e_, _e_, _S_ »))
+            1. Let _selected_ be ToBoolean(? Call(_callbackfn_, _T_, « _e_, _e_, _set_ »))
             1. If _selected_ is *true*, then:
-                1. Call(_adder_, _S_, « _e_ »)
-    13. Return _A_.
+                1. Call(_adder_, _set_, « _e_ »)
+    12. Return _newSet_.
 
 </emu-alg>

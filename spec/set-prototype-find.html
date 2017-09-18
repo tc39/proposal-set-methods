@@ -2,23 +2,16 @@
 
 
 <emu-alg>
-    1. Let _S_ be the *this* value.
-    2. If Type(_S_) is not Object, throw a *TypeError* exception.
-    3. If _S_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
-    4. If IsCallable(_callbackfn_) is false, throw a *TypeError* exception.
-    5. If _thisArg_ was supplied, let _T_ be _thisArg_; else let _T_ be *undefined*.
-    6. Let _C_ be ? Get(_S_, "constructor").
-    7. If IsConstructor(_C_) is true, then
-        1. Let _A_ be ? Construct(_C_)
-    8. Else,
-        1. Throw a *TypeError* exception.
-    9. Let _adder_ be ? Get(_A_, "add")
-    10. If IsCallable(_adder_) is *false*, throw a *TypeError* exception.
-    11. Let _entries_ be the List that is _S_.[[SetData]]
-    12. For each _e_ that is an element of _entries_, in original insertion order, do:
-        1. If _e_ is not `empty`, then
-            1. Let _testResult_ be ToBoolean(? Call(_callbackfn_, _T_, « _e_, _e_, _S_ »))
-            2. If _testResult_ is *true*, then return _e_
-    13. Return *undefined*.
+    1. Let _set_ be the *this* value.
+        1. If Type(_set_) is not Object, throw a *TypeError* exception.
+        2. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
+    2. If IsCallable(_callbackfn_) is false, throw a *TypeError* exception.
+    3. If _thisArg_ was supplied, let _T_ be _thisArg_; else let _T_ be *undefined*.
+    4. Let _entries_ be the List that is _set_.[[SetData]]
+    5. For each _ele_ that is an element of _entries_, in original insertion order, do:
+        1. If _ele_ is not `empty`, then
+            1. Let _testResult_ be ToBoolean(? Call(_callbackfn_, _T_, « _ele_, _ele_, _set_ »))
+            2. If _testResult_ is *true*, then return _ele_
+    6. Return *undefined*.
 
 </emu-alg>

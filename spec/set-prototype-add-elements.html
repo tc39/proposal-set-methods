@@ -3,16 +3,16 @@
 <emu-alg>
     1. Let _len_ be the actual number of arguments passed to this function.
     2. Let _items_ be the List of arguments passed to this function.
-    3. Let _C_ be the *this* value.
-        1. If Type(_C_) is not Object, throw a *TypeError* exception.
+    3. Let _set_ be the *this* value.
+        1. If Type(_set_) is not Object, throw a *TypeError* exception.
     4. Let _k_ be 0.
-    5. Let _adder_ be ? Get(_C_, "add")
+    5. Let _adder_ be ? Get(_set_, "add")
     6. If IsCallable(_adder_) is *false*, throw a *TypeError* exception.
     7. Repeat while _k_ < _len_
         1. Let _kValue_ be _items_[_k_].
-        2. Call(_adder_, _C_, _kValue_)
+        2. Call(_adder_, _set_, _kValue_)
         3. Increase _k_ by 1.
-    8. Return _C_.
+    8. Return _set_.
 
 </emu-alg>
 
