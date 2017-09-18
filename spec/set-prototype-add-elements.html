@@ -4,6 +4,7 @@
     1. Let _len_ be the actual number of arguments passed to this function.
     2. Let _items_ be the List of arguments passed to this function.
     3. Let _C_ be the *this* value.
+        1. If Type(_C_) is not Object, throw a *TypeError* exception.
     4. Let _k_ be 0.
     5. Let _adder_ be ? Get(_C_, "add")
     6. If IsCallable(_adder_) is *false*, throw a *TypeError* exception.

@@ -4,6 +4,7 @@
     1. Let _len_ be the actual number of arguments passed to this function.
     2. Let _items_ be the List of arguments passed to this function.
     3. Let _S_ be the *this* value.
+        1. If Type(_S_) is not Object, throw a *TypeError* exception.
     4. Let _k_ be 0.
     6. Let _C_ be ? Get(_S_, "constructor").
     7. If IsConstructor(_C_) is true, then
