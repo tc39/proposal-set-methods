@@ -6,7 +6,7 @@
   "scripts": {
     "spec": "ecmarkup spec/index.html docs/index.html --js docs/ecmarkup.js --css docs/ecmarkup.css",
     "watch": "ecmarkup --watch spec/index.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css",
-    "test":"mocha -r ./polyfill.js test/*.spec.js"
+    "test": "mocha -r ./polyfill.js test/*.spec.js"
   },
   "devDependencies": {
     "ecmarkup": "^3.11.2"

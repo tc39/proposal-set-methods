@@ -6,14 +6,11 @@
     3. Let _set_ be the *this* value.
         1. If Type(_set_) is not Object, throw a *TypeError* exception.
     4. Let _k_ be 0.
-    6. Let _Ctr_ be ? Get(_set_, "constructor").
-    7. If IsConstructor(_Ctr_) is true, then
-        1. Let _newSet_ be ? Construct(_Ctr_, « _S »)
-    8. Else,
-        1. Throw a *TypeError* exception.
-    9. Let _remover_ be ? Get(_newSet_, "delete").
-    10. If IsCallable(_remover_) is *false*, throw a *TypeError* exception.
-    11. Repeat while _k_ < _len_
+    5. Let _Ctr_ be ? SpeciesConstructor(_set_, %Set%)
+    6. Let _newSet_ be ? Construct(_Ctr_)
+    7. Let _remover_ be ? Get(_newSet_, "delete").
+    8. If IsCallable(_remover_) is *false*, throw a *TypeError* exception.
+    9. Repeat while _k_ < _len_
         1. Let _iterable_ be _items_[_k_].
         2. Let _iter_ be GetIterator(_iterable_).
         3. If _iter_ is undefined, throw a *TypeError* exception.
