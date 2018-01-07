@@ -7,7 +7,7 @@
         1. If Type(_set_) is not Object, throw a *TypeError* exception.
     4. Let _k_ be 0.
     5. Let _Ctr_ be ? SpeciesConstructor(_set_, %Set%)
-    6. Let _newSet_ be ? Construct(_Ctr_)
+    6. Let _newSet_ be ? Construct(_Ctr_, _set_)
     7. Let _remover_ be ? Get(_newSet_, "delete").
     8. If IsCallable(_remover_) is *false*, throw a *TypeError* exception.
     9. Repeat while _k_ < _len_
@@ -21,7 +21,7 @@
             4. Let _status_ be Call(_remover_, _newSet_, « _nextValue_.[[Value]] »)
             5. If _status_ is an abrupt completion, return IteratorClose(_iter_, _status_)
             5. Increase _k_ by 1.
-        12. Return _newSet_.
+    10. Return _newSet_.
 
 
 </emu-alg>

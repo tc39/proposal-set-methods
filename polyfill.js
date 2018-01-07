@@ -1,13 +1,50 @@
 'use strict';
 
-function assert(val, err=new TypeError()) {
+var originalSet = Set;
+
+function assert(val, msg) {
     if (!val) {
-        throw err;
+        throw new TypeError(msg);
     }
 }
 
-function getSpeciesConstructor(obj) {
-    return obj.constructor[Symbol.species];
+function isObject(x) {
+    return (typeof x === 'function' || typeof x === 'object');
+}
+
+function SpeciesConstructor(O, defaultConstructor) {
+    assert(isObject(O), 'O is not Object');
+
+    var C = O.constructor;
+
+    if (typeof C === 'undefined') {
+        return defaultConstructor;
+    }
+
+    if (!isObject(C)) {
+        throw new TypeError('O.constructor is not an Object');
+    }
+
+    var S = C[Symbol.species];
+
+    if (S == null) {
+        return defaultConstructor;
+    }
+
+    if (typeof S === 'function' && !!S.prototype) {
+        return S;
+    }
+
+    throw new TypeError('no constructor found');
+}
+
+function isCallable(x) {
+    try {
+        Function.prototype.toString.call(x);
+        return true;
+    } catch(e) {
+        return false;
+    }
 }
 
 function isSet(obj) {
@@ -21,19 +58,26 @@ function isSet(obj) {
     );
 }
 
-function subtract(...iterables) {
-    assert(isSet(this));
-    const subConstructor = getSpeciesConstructor(this);
-    const ret = new subConstructor(this);
-    for(const iterable of iterables) {
-        for (const element of iterable) {
-            if (ret.has(element)) {
-                ret.delete(element);
-            }
+function subtract(...items) {
+    const len = items.length;
+    const set = this;
+    assert(isObject(set), 'set is not an Object');
+
+    let k = 0;
+    const Ctr = SpeciesConstructor(set, originalSet);
+    const newSet = new Ctr(set);
+    const remover = newSet.delete;
+    assert(isCallable(remover), 'remover is not callable');
+
+    while (k < len) {
+        const iterable = items[k];
+        for (const value of iterable) {
+            Reflect.apply(remover, newSet, [value]);
         }
+        k++;
     }
 
-    return ret;
+    return newSet;
 }
 
 function filter(predicate, thisArg = null) {
@@ -91,18 +135,27 @@ function every(predicate, thisArg = null) {
     return true;
 }
 
-function union(...iterables) {
-    assert(isSet(this));
-    assert(iterables.length > 0);
-    const subConstructor = getSpeciesConstructor(this);
-    const ret = new subConstructor();
-    const setIterables = [this].concat(iterables);
-    for (const _set of setIterables) {
-        for (const element of _set) {
-            ret.add(element);
+function union(...items) {
+    const len = items.length;
+    const set = this;
+    assert(isObject(set), 'set is not an Object');
+
+    let k = 0;
+    const Ctr = SpeciesConstructor(set, originalSet);
+    const newSet = new Ctr(set);
+    const adder = newSet.add;
+    assert(isCallable(adder), 'adder is not callable');
+
+
+    while (k < len) {
+        const iterable = items[k];
+        for (const value of iterable) {
+            Reflect.apply(adder, newSet, [value]);
         }
+        k++;
     }
-    return ret;
+
+    return newSet;
 }
 
 function intersect(...iterables) {
@@ -121,22 +174,6 @@ function intersect(...iterables) {
     return ret;
 }
 
-function xor(...iterables) {
-    assert(isSet(this));
-    assert(iterables.length > 0);
-    const subConstructor = getSpeciesConstructor(this); // readability
-    const ret = new subConstructor();
-    const setIterables = [this].concat(iterables).map(iterable=>new subConstructor(iterable));
-    for (const _set of setIterables) {
-        for (const element of _set) {
-            if (setIterables.filter(_set=>_set.has(element)).length === 1) {
-                ret.add(element);
-            }
-        }
-    }
-    return ret;
-}
-
 function addElements(...args) {
     assert(isSet(this));
     for (const element of args) {
@@ -145,22 +182,28 @@ function addElements(...args) {
     return this;
 }
 
-function removeElements(...args) {
-    assert(isSet(this));
-    for (const element of args) {
-        this.delete(element);
+function removeElements(...items) {
+    const len = items.length;
+    const set = this;
+    assert(isObject(set), 'set is not an Object');
+
+    let k = 0;
+    const remover = set.delete;
+    assert(isCallable(remover), 'remover is not a function');
+
+    while (k < len) {
+        const value = items[k];
+        Reflect.apply(remover, set, [value]);
+        k++;
     }
     return this;
 }
 
-
-
-assert(typeof Set === 'function');
+assert(typeof Set === 'function', 'Set does not exist');
 const prototypeMethods = [
     ['map', map],
     ['filter', filter],
     ['some', some],
-    ['xor', xor],
     ['intersect', intersect],
     ['every', every],
     ['find', find],
@@ -174,11 +217,13 @@ const staticMethods = [
 ];
 for (const [key, value] of prototypeMethods) {
     Object.defineProperty(Set.prototype, key, {
+        configurable: true,
         value
     });
 }
 for (const [key, value] of staticMethods) {
     Object.defineProperty(Set, key, {
+        configurable: true,
         value
     });
 }
