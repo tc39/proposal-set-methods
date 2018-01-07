@@ -36,6 +36,7 @@ See [formal spec WIP](https://ginden.github.io/set-methods/).
 * no `reverse`, `sort` etc. APIs inherited from `Immutable.Collection` (no sense in unordered collection) in this proposal
 * no `flatMap`, `filterNot` etc. APIs not found in Array API in this proposal
 * no `reduce` in this proposal
+* No `Set.isSet`
 
 ## Comparison with Collection.js
 
@@ -69,9 +70,9 @@ Signature of these functions isn't obvious. They can accept:
 
 * single Set
   * best possible performance
-  * rather limited - would slowdown adoption
+  * would slowdown adoption
 * multiple Sets
-  * seems like rare use case
+  * looks like rare use case
 * Single iterable
   * Consistent with other languages (eg. [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx))
 * Multiple iterables
@@ -83,9 +84,8 @@ Signature of these functions isn't obvious. They can accept:
 
 This proposal does not change grammar of language. 
 
-New methods are added to objects `Set` and `Set.prototype`.
+New methods are added to `Set.prototype`.
 
-* `Set.isSet(obj)` - checks presence of internal property ``[[SetData]]``.
 * Array-like methods. These methods replicates functionality of `Array.prototype` methods:
   * `Set.prototype.filter(predicate, thisArg)`
   * `Set.prototype.map(fn, thisArg)`
@@ -119,13 +119,11 @@ New methods are added to objects `Set` and `Set.prototype`.
 
 ## Alternative
 
-* Add methods to `%SetIteratorPrototype%` or even more generic `%IteratorPrototype%` and make `Set` methods to use them.
+* Add methods to `%SetIteratorPrototype%` or even more generic `%IteratorPrototype%` and make `Set` methods to use them internally.
     * Allows for better optimization for many cases (no intermediate collections)
     * **Can be delayed** - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it's unlikely to break the web
         * Code that subclass `Set` **and** redefines `@@iterator` to not use `%SetIteratorPrototype%`
     
-"Polyfill" if `%SetIterratorPrototype%` is extended
-
 ```javascript
 Set.prototype.map = function map(fn) {
     const Ctor = this.constructor[Symbol.species];
