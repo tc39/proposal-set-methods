@@ -1,7 +1,28 @@
 <p>When the `reduce` method is called, the following steps are taken:</p>
 
-
 <emu-alg>
-    TBA
-
+    1. Let _set_ be the *this* value.
+        1. If Type(_set_) is not Object, throw a *TypeError* exception.
+        2. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
+    2. If IsCallable(_callbackfn_) is false, throw a *TypeError* exception.
+    4. Let _entries_ be the List made of all non-~empty~ elements in _set_.[[SetData]] with in insertion order.
+    5. Let _len_ be length of _entries_.
+    6. If _len_ is 0 and _initialValue_ is not present, throw *TypeError* exception.
+    7. Let _accumulator_ be *undefined*
+    8. Let _k_ be 0.
+    8, If _initialValue_ is present, then
+        1. Set _accumulator_ to _initialValue_
+    8. Else _initialValue_ is not present,
+        1. Set _accumulator_ to _entries_[0]
+        2. Set _k_ to 1;
+    9. Repeat, while k < len
+        1. Let _kValue_ be ? entries[k];
+        2. Set _accumulator_ to ? Call(_callbackfn_, undefined, « _accumulator_, _kValue_, _kValue_, _set_ »)
+    10. Return _accumulator_.
 </emu-alg>
+
+<emu-note>
+    Actually, described algorithm doesn't guard against emptying [[SetData]] in middle of iteration.
+
+    Elegant way to describe algorithm without two iterations over [[SetData]] is required.
+</emu-note>
