@@ -8,4 +8,4 @@ describe.skip('Set.prototype.isSupersetOf', () => {
         assert.isFunction(set.isSuperset);
         assert.isFunction(Set.prototype.isSuperset);
     })
-})
+});

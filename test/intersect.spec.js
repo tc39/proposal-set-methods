@@ -8,4 +8,4 @@ describe.skip('Set.prototype.intersect', () => {
         assert.isFunction(set.intersect);
         assert.isFunction(Set.prototype.intersect);
     })
-})
+});

@@ -2,10 +2,10 @@
 
 const {assert} = require('chai');
 
-describe.skip('Set.prototype.xor', () => {
+describe.skip('Set.prototype.symmetricDifference', () => {
     it('Should be present', () => {
         const set = new Set();
-        assert.isFunction(set.xor);
-        assert.isFunction(Set.prototype.xor);
+        assert.isFunction(set.symmetricDifference);
+        assert.isFunction(Set.prototype.symmetricDifference);
     })
 })
