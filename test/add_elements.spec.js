@@ -2,10 +2,10 @@
 
 const {assert} = require('chai');
 
-describe.skip('Set.prototype.addElements', () => {
+describe.skip('Set.prototype.addAll', () => {
     it('Should be present', () => {
         const set = new Set();
-        assert.isFunction(set.addElements);
-        assert.isFunction(Set.prototype.addElements);
+        assert.isFunction(set.addAll);
+        assert.isFunction(Set.prototype.addAll);
     })
 })

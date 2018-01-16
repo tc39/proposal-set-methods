@@ -40,7 +40,7 @@ See [formal spec WIP](https://ginden.github.io/set-methods/).
 
 ## Comparison with Collection.js
 
-* Naming (`addEach` vs. `addElements`, `union` vs. `concat` etc.)
+* Naming (`addEach` vs. `addAll`, `union` vs. `concat` etc.)
 * `some`, `filter`, `every`, `map` etc. are identical and follow Array API
 * many methods from Collection.js are not present in this proposal (some of them are related to observing collection feature)
 
@@ -98,9 +98,9 @@ New methods are added to `Set.prototype`.
   * `Set.prototype.xor(...iterables)` - returns `Set` of elements found only in one of `[this, ...iterables]`.
     * Alternative name: `.symmetricDifference`
 * New methods:
-  * `Set.prototype.addElements(...elements)` - similar to `Array.prototype.push`. Adds all of arguments to existing `Set`.
+  * `Set.prototype.addAll(...elements)` - similar to `Array.prototype.push`. Adds all of arguments to existing `Set`.
     * Alternative name: `.addEach`
-  * `Set.prototype.removeElements(...elements)` - reverse of `addElements`. Remove every `element` from existing `Set`.
+  * `Set.prototype.deleteAll(...elements)` - reverse of `addAll`. Remove every `element` from existing `Set`.
     * Alternative names: `.deleteEach`, `.deleteElements`
 
 ## Not included in this proposal but worth considering

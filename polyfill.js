@@ -174,7 +174,7 @@ function intersect(...iterables) {
     return ret;
 }
 
-function addElements(...args) {
+function addAll(...args) {
     assert(isSet(this));
     for (const element of args) {
         this.add(element);
@@ -182,7 +182,7 @@ function addElements(...args) {
     return this;
 }
 
-function removeElements(...items) {
+function deleteAll(...items) {
     const len = items.length;
     const set = this;
     assert(isObject(set), 'set is not an Object');
@@ -208,8 +208,8 @@ const prototypeMethods = [
     ['every', every],
     ['find', find],
     ['subtract', subtract],
-    ['addElements', addElements],
-    ['removeElements', removeElements],
+    ['addAll', addAll],
+    ['deleteAll', deleteAll],
     ['union', union]
 ];
 const staticMethods = [
