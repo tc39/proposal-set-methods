@@ -10,18 +10,15 @@
     6. Let _newSet_ be ? Construct(_Ctr_, _set_)
     7. Let _remover_ be ? Get(_newSet_, "delete").
     8. If IsCallable(_remover_) is *false*, throw a *TypeError* exception.
-    9. Repeat while _k_ < _len_
-        1. Let _iterable_ be _items_[_k_].
-        2. Let _iter_ be GetIterator(_iterable_).
-        3. If _iter_ is undefined, throw a *TypeError* exception.
-        4. Repeat,
-            1. Let _next_ be IteratorStep(_iter_).
-            2. If _next_ is *false*, exit innermost loop.
-            3. Let _nextValue_ be ? IteratorValue(_next_).
-            4. Let _status_ be Call(_remover_, _newSet_, « _nextValue_.[[Value]] »)
-            5. If _status_ is an abrupt completion, return IteratorClose(_iter_, _status_)
-            5. Increase _k_ by 1.
-    10. Return _newSet_.
+    9. Let _iter_ be GetIterator(_iterable_).
+    10. If _iter_ is undefined, throw a *TypeError* exception.
+    11. Repeat,
+        1. Let _next_ be IteratorStep(_iter_).
+        2. If _next_ is *false*, exit innermost loop.
+        3. Let _nextValue_ be ? IteratorValue(_next_).
+        4. Let _status_ be Call(_remover_, _newSet_, « _nextValue_.[[Value]] »)
+        5. If _status_ is an abrupt completion, return IteratorClose(_iter_, _status_)
+    12. Return _newSet_.
 
 
 </emu-alg>

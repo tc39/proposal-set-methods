@@ -31,11 +31,10 @@ See [formal spec WIP](https://ginden.github.io/set-methods/).
 
 * No static `of` and `fromKeys` methods in this proposal
 * No static `intersect`, `union` methods in this proposal
-* `union`, `intersect`, `difference` are identical
+* `union`, `intersect`, `difference` takes single argument
 * `map`, `filter`, `some`, `every`,   methods are identical and follow Array API
 * no `reverse`, `sort` etc. APIs inherited from `Immutable.Collection` (no sense in unordered collection) in this proposal
 * no `flatMap`, `filterNot` etc. APIs not found in Array API in this proposal
-* no `reduce` in this proposal
 * No `Set.isSet`
 
 ## Comparison with Collection.js
@@ -62,7 +61,15 @@ Stream API nor `Set` does not include `intersect`, `xor`, `some`, `every`.
 Most of APIs included in this proposal are present in [C# `HashSet`](https://msdn.microsoft.com/en-us/library/bb359438.aspx)
 
 * `intersect`, `union` (as `Concat`), `difference `,  `map`, `filter` (as `Where`), `some`, `every`, `filter`, `xor` (as `SymmetricExceptWith`) are present
-* Ogther methods outside of scope of this proposal are present (coming from `System.Linq.Enumerable` mostly)
+* Other methods outside of scope of this proposal are present (coming from `System.Linq.Enumerable` mostly)
+
+### Other languages
+
+* [F# - Collections.Set](https://msdn.microsoft.com/en-au/vstudio/ee340244(v=vs.89))
+* [Haskell - Data.Set](http://hackage.haskell.org/package/containers-0.5.10.2/docs/Data-Set.html)
+* [Python - set/frozenset](https://docs.python.org/3.6/library/stdtypes.html#set)
+* [Hack - HH\Set](https://docs.hhvm.com/hack/reference/class/HH.Set/)
+* [Ruby - Set](https://ruby-doc.org/stdlib-2.5.0/libdoc/set/rdoc/Set.html)
 
 # `.union`, `.intersect` etc. desired signature
 
@@ -89,27 +96,41 @@ New methods are added to `Set.prototype`.
 * Array-like methods. These methods replicates functionality of `Array.prototype` methods:
   * `Set.prototype.filter(predicate, thisArg)`
   * `Set.prototype.map(fn, thisArg)`
+  * `Set.prototype.find(fn, thisArg)`
+  * `Set.prototype.reduce(fn, initialValue)`
+  * `Set.prototype.join(separator)`
   * `Set.prototype.some(predicate, thisArg)`
   * `Set.prototype.every(predicate, thisArg)`
 * Set theory methods:
-  * `Set.prototype.intersect(...iterables)` - method creates new `Set` instance by set intersect operation.
-  * `Set.prototype.union(...iterables)` - method creates new `Set` instance by set union operation.
-  * `Set.prototype.difference(...iterables)` - method creates new `Set` without elements present in `iterables`.
-  * `Set.prototype.xor(...iterables)` - returns `Set` of elements found only in one of `[this, ...iterables]`.
-    * Alternative name: `.symmetricDifference`
+  * `Set.prototype.intersect(iterable)` - method creates new `Set` instance by set intersect operation.
+  * `Set.prototype.union(iterable)` - method creates new `Set` instance by set union operation.
+    * Alternative name ([1](https://github.com/Ginden/set-methods/issues/12#issuecomment-357887331)): `.concat`
+  * `Set.prototype.difference(iterable)` - method creates new `Set` without elements present in `iterable`.
+  * `Set.prototype.symmetricDifference(iterable)` - returns `Set` of elements found only in either `this` or in `iterable`.
+    * Alternative name: `.xor`
 * New methods:
   * `Set.prototype.addAll(...elements)` - similar to `Array.prototype.push`. Adds all of arguments to existing `Set`.
     * Alternative name: `.addEach`
-  * `Set.prototype.deleteAll(...elements)` - reverse of `addAll`. Remove every `element` from existing `Set`.
-    * Alternative names: `.deleteEach`, `.deleteElements`
+  * `Set.prototype.deleteAll(...elements)` - reverse of `addAll`. Remove every `element` in `elements` from existing `Set`.
+    * Alternative names: `.deleteEach`
 
+
+## Rejected Array methods
+
+* `fill` - idea of "filling" set make no sense
+* `findIndex`, `indexOf` - sets aren't indexed
+* `includes` - already covered by native `.has`
+* `shift`, `unshift`, `pop`, `push` - sets don't have idea of "last element" or "first element"
+* `forEachRight`, `reduceRight` methods - iteration order for Set should be thought as implementation detail. `reduceRight` explicitly starts from "last element" - but there is no last element in set.
+* `sort` - sets are unordered
+ 
 ## Not included in this proposal but worth considering
 
 * `Set.prototype.isSubsetOf(otherSet)`
 * `Set.prototype.isSupersetOf(iterable)`
-* `Set.prototype.reduce`, `Set.prototype.reduceRight` - present in `Immutable.js` and `Collections.js`. 
 * `Set.prototype.flatMap`, `Set.prototype.flatten` - should be added if [`Array.prototype.flatMap`](https://github.com/tc39/proposal-flatMap) is added to language
 * Static `Set.union(...iterables)`, `Set.intersect(...iterables)`
+
 
 # Why not `%IteratorPrototype%` methods
 
@@ -122,11 +143,13 @@ New methods are added to `Set.prototype`.
 * Add methods to `%SetIteratorPrototype%` or even more generic `%IteratorPrototype%` and make `Set` methods to use them internally.
     * Allows for better optimization for many cases (no intermediate collections)
     * **Can be delayed** - `Set` methods can be changed in future to internally use `%SetIteratorPrototype%` and it's unlikely to break the web
-        * Code that subclass `Set` **and** redefines `@@iterator` to not use `%SetIteratorPrototype%`
+        * Code that subclass `Set` **and** redefines `@@iterator` to not use `%SetIteratorPrototype%`.
+* [Protocols proposal](https://github.com/michaelficarra/proposal-first-class-protocols)
+    
     
 ```javascript
 Set.prototype.map = function map(fn) {
-    const Ctor = this.constructor[Symbol.species];
+    const Ctor = SpeciesConstructor(this, Set);
     const iterator = this.entries().map(fn);
     return new Ctor(iterator);
 }
