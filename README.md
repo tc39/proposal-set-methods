@@ -121,7 +121,7 @@ New methods are added to `Set.prototype`.
 * `findIndex`, `indexOf` - sets aren't indexed
 * `includes` - already covered by native `.has`
 * `shift`, `unshift`, `pop`, `push` - sets don't have idea of "last element" or "first element"
-* `forEachRight`, `reduceRight` methods - iteration order for Set should be thought as implementation detail. `reduceRight` explicitly starts from "last element" - but there is no last element in set.
+* `reduceRight` method - iteration order for Set should be thought as implementation detail. `reduceRight` explicitly starts from "last element" - but there is no last element in set.
 * `sort` - sets are unordered
  
 ## Not included in this proposal but worth considering
