@@ -31,7 +31,7 @@ See [formal spec WIP](https://ginden.github.io/set-methods/).
 
 * No static `of` and `fromKeys` methods in this proposal
 * No static `intersect`, `union` methods in this proposal
-* `union`, `intersect`, `subtract` are identical
+* `union`, `intersect`, `difference` are identical
 * `map`, `filter`, `some`, `every`,   methods are identical and follow Array API
 * no `reverse`, `sort` etc. APIs inherited from `Immutable.Collection` (no sense in unordered collection) in this proposal
 * no `flatMap`, `filterNot` etc. APIs not found in Array API in this proposal
@@ -61,8 +61,8 @@ Stream API nor `Set` does not include `intersect`, `xor`, `some`, `every`.
 
 Most of APIs included in this proposal are present in [C# `HashSet`](https://msdn.microsoft.com/en-us/library/bb359438.aspx)
 
-* `intersect`, `union` (as `Concat`), `subtract `,  `map`, `filter` (as `Where`), `some`, `every`, `filter`, `xor` (as `SymmetricExceptWith`) are present
-* `reduce` and other methods outside of scope of this proposal are present (coming from `System.Linq.Enumerable` mostly)
+* `intersect`, `union` (as `Concat`), `difference `,  `map`, `filter` (as `Where`), `some`, `every`, `filter`, `xor` (as `SymmetricExceptWith`) are present
+* Ogther methods outside of scope of this proposal are present (coming from `System.Linq.Enumerable` mostly)
 
 # `.union`, `.intersect` etc. desired signature
 
@@ -94,7 +94,7 @@ New methods are added to `Set.prototype`.
 * Set theory methods:
   * `Set.prototype.intersect(...iterables)` - method creates new `Set` instance by set intersect operation.
   * `Set.prototype.union(...iterables)` - method creates new `Set` instance by set union operation.
-  * `Set.prototype.subtract(...iterables)` - method creates new `Set` without elements present in `iterables`.
+  * `Set.prototype.difference(...iterables)` - method creates new `Set` without elements present in `iterables`.
   * `Set.prototype.xor(...iterables)` - returns `Set` of elements found only in one of `[this, ...iterables]`.
     * Alternative name: `.symmetricDifference`
 * New methods:

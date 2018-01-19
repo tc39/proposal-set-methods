@@ -130,11 +130,11 @@ emu-note > div.note-contents {
   flex-shrink: 1;
 }
 
-emu-note > div.note-contents > p:first-of-type {
+emu-note > div.note-contents > p:first-child {
   margin-top: 0;
 }
 
-emu-note > div.note-contents > p:last-of-type {
+emu-note > div.note-contents > p:last-child {
   margin-bottom: 0;
 }
 

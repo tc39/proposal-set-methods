@@ -58,7 +58,7 @@ function isSet(obj) {
     );
 }
 
-function subtract(...items) {
+function difference(...items) {
     const len = items.length;
     const set = this;
     assert(isObject(set), 'set is not an Object');
@@ -207,7 +207,7 @@ const prototypeMethods = [
     ['intersect', intersect],
     ['every', every],
     ['find', find],
-    ['subtract', subtract],
+    ['difference', difference],
     ['addAll', addAll],
     ['deleteAll', deleteAll],
     ['union', union]
