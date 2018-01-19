@@ -117,7 +117,7 @@ New methods are added to `Set.prototype`.
 
 ## Rejected Array methods
 
-* `fill` - idea of "filling" set make no sense
+* `fill` - idea of "filling" set doesn't make sense
 * `findIndex`, `indexOf` - sets aren't indexed
 * `includes` - already covered by native `.has`
 * `shift`, `unshift`, `pop`, `push` - sets don't have idea of "last element" or "first element"
