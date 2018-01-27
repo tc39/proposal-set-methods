@@ -2,6 +2,8 @@
 
 See [formal spec WIP](https://ginden.github.io/set-methods/).
 
+See [proposal extending Set and Map with Array-like methods](https://github.com/Ginden/collection-methods).
+
 # (Semi)relevant previous discussions
 
 * [Map#map and Map#filter](https://github.com/tc39/ecma262/pull/13)
