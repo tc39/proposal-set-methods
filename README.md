@@ -1,8 +1,8 @@
 # New Set methods
 
-See [formal spec WIP](https://ginden.github.io/set-methods/).
+See [formal spec WIP](https://tc39.github.io/proposal-set-methods/).
 
-See [proposal extending Set and Map with Array-like methods](https://github.com/Ginden/collection-methods).
+See [proposal extending Set and Map with Array-like methods](https://github.com/tc39/proposal-collection-methods).
 
 # (Semi)relevant previous discussions
 
