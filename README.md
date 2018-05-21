@@ -69,7 +69,7 @@ Signature of these functions isn't obvious. They can accept:
 
 # Proposal
 
-This proposal does not change grammar of language. 
+This proposal does not change syntax of language. 
 
 New methods based on set theory are added to `Set.prototype`.
 
@@ -89,18 +89,17 @@ New methods based on set theory are added to `Set.prototype`.
 
 **Symmetric difference**
 
-Proposed names: `xor`, `symmetricDifference`, `disjointUnion`
+Proposed names: `xor`, **`symmetricDifference`**, `disjointUnion`
 
 **Intersection**
 
-Proposed names: `intersect`, `intersection`.
+Proposed names: **`intersect`**, `intersection`.
 
 **Union**
 
-Proposed names: `union`, `concat`.
+Proposed names: **`union`**, `concat`.
 
 **Difference**
 
-Proposed names: `difference`, `minus`, `except`, `without`, `withoutAll`, `relativeComplement`.
+Proposed names: **`difference`**, `minus`, `except`, `without`, `withoutAll`, `relativeComplement`.
 
-Issues related: #2 #7 #10
