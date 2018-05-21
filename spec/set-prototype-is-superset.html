@@ -1,0 +1,21 @@
+<p>When the `isSuperset` method is called, the following steps are taken:</p>
+
+<emu-alg>
+    1. Let _set_ be the *this* value.
+    1. If Type(_set_) is not Object, throw a *TypeError* exception.
+    1. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
+    1. Let _hasCheck_ be ? Get(_set_, "has").
+    1. If IsCallable(_hasCheck_) is *false*, throw a *TypeError* exception.
+    1. Let _iter_ be ? GetIterator(_iterable_).
+    1. If _iter_ is undefined, throw a *TypeError* exception.
+    1. Repeat,
+        1. Let _next_ be IteratorStep(_iter_).
+        1. If _next_ is *false*, return *true*.
+        1. Let _nextValue_ be ? IteratorValue(_next_).
+        1. Let _has_ be ? Call(_hasCheck_, _set_, « e »).
+        1. If _has_ is an abrupt completion, return ? IteratorClose(_iter_, _has_).
+        1. If _has_ is *false*, return *false*.
+
+</emu-alg>
+
+<p>The `length` property of the `isSuperSet` method is *1*.</p>
