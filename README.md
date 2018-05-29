@@ -93,7 +93,7 @@ Proposed names: `xor`, **`symmetricDifference`**, `disjointUnion`
 
 **Intersection**
 
-Proposed names: **`intersect`**, `intersection`.
+Proposed names: `intersect`, **`intersection`**.
 
 **Union**
 
