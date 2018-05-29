@@ -26,8 +26,8 @@ See [proposal extending Set and Map with Array-like methods](https://github.com/
 
 ## Comparision with Immutable.js
 
-* No static `intersect`, `union` methods in this proposal
-* `union`, `intersect`, `difference` takes single argument
+* No static `intersection`, `union` methods in this proposal
+* `union`, `intersection`, `difference` takes single argument
 
 
 ## Comparison with other languages
@@ -40,7 +40,7 @@ Though, Java 8 introduces [stream API](http://docs.oracle.com/javase/8/docs/api/
 
 Stream API has methods from this proposal like `union` (as `concat`).
 
-Stream API nor `Set` does not include `intersect`, `xor`.
+Stream API nor `Set` does not include `intersection`, `xor`.
 
 ### Other languages
 
@@ -51,7 +51,7 @@ Stream API nor `Set` does not include `intersect`, `xor`.
 * [Hack - HH\Set](https://docs.hhvm.com/hack/reference/class/HH.Set/)
 * [Ruby - Set](https://ruby-doc.org/stdlib-2.5.0/libdoc/set/rdoc/Set.html)
 
-# `.union`, `.intersect` etc. desired signature
+# `.union`, `.intersection` etc. desired signature
 
 Signature of these functions isn't obvious. They can accept:
 
@@ -64,7 +64,7 @@ Signature of these functions isn't obvious. They can accept:
   * Consistent with other languages (eg. [LINQ `.intersect` method](https://msdn.microsoft.com/en-us/library/bb460136(v=vs.100).aspx))
 * Multiple iterables
   * Used by Immutable.js
-  * Certain algorithms can be ineffective without converting arguments to `Set` instances (`intersect` without at least `log(n)` random access seems to be too slow for real world)
+  * Certain algorithms can be ineffective without converting arguments to `Set` instances (`intersection` without at least `log(n)` random access seems to be too slow for real world)
 
 
 # Proposal
@@ -73,7 +73,7 @@ This proposal does not change syntax of language.
 
 New methods based on set theory are added to `Set.prototype`.
 
-  * `Set.prototype.intersect(iterable)` - method creates new `Set` instance by set intersect operation.
+  * `Set.prototype.intersection(iterable)` - method creates new `Set` instance by set intersection operation.
   * `Set.prototype.union(iterable)` - method creates new `Set` instance by set union operation.
   * `Set.prototype.difference(iterable)` - method creates new `Set` without elements present in `iterable`.
   * `Set.prototype.symmetricDifference(iterable)` - returns `Set` of elements found only in either `this` or in `iterable`.
@@ -83,7 +83,7 @@ New methods based on set theory are added to `Set.prototype`.
 
 * `Set.prototype.isSubsetOf(otherSet)`
 * `Set.prototype.isSupersetOf(iterable)`
-* Static `Set.union(...iterables)`, `Set.intersect(...iterables)`
+* Static `Set.union(...iterables)`, `Set.intersection(...iterables)`
 
 ## Naming
 
@@ -93,7 +93,7 @@ Proposed names: `xor`, **`symmetricDifference`**, `disjointUnion`
 
 **Intersection**
 
-Proposed names: **`intersect`**, `intersection`.
+Proposed names: `intersect`, **`intersection`**.
 
 **Union**
 
