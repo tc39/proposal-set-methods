@@ -56,6 +56,13 @@ See [other languages document](./other-languages.md) to get overview of `Set` me
 
 * Static `Set.union(...iterables)`, `Set.intersection(...iterables)`
 
+## Polyfill
+
+Polyfill is avalaible in `core-js` package.
+
+See [core-js/packages/core-js/features/set/
+](https://github.com/zloirock/core-js/tree/master/packages/core-js/features/set)
+
 ## Naming
 
 See [naming bikeshedding](./name-bikeshedding.md) document for details.

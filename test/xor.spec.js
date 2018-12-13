@@ -8,4 +8,4 @@ describe.skip('Set.prototype.symmetricDifference', () => {
         assert.isFunction(set.symmetricDifference);
         assert.isFunction(Set.prototype.symmetricDifference);
     })
-})
+});
