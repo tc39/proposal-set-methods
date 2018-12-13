@@ -19,9 +19,9 @@
   "keywords": [],
   "author": "Michał Wadas <michalwadas@gmail.com>",
   "bugs": {
-    "url": "https://github.com/Ginden/set-methods/issues"
+    "url": "https://github.com/tc39/proposal-set-methods/issues"
   },
-  "homepage": "https://github.com/Ginden/set-methods#readme",
+  "homepage": "https://github.com/tc39/proposal-set-methods#readme",
   "dependencies": {
     "chai": "^4.1.0",
     "mocha": "^3.5.0"
