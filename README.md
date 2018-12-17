@@ -58,10 +58,8 @@ See [other languages document](./other-languages.md) to get overview of `Set` me
 
 ## Polyfill
 
-Polyfill is avalaible in `core-js` package.
-
-See [core-js/packages/core-js/features/set/
-](https://github.com/zloirock/core-js/tree/master/packages/core-js/features/set)
+* [core-js/packages/core-js/features/set/](https://github.com/zloirock/core-js/tree/master/packages/core-js/features/set)
+* [set-extensions](https://github.com/jankapunkt/js-set-extension)
 
 ## Naming
 
