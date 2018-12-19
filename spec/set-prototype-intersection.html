@@ -15,9 +15,9 @@
         1. Let _next_ be IteratorStep(_iter_).
         1. If _next_ is *false*, return _newSet_.
         1. Let _nextValue_ be ? IteratorValue(_next_).
-        1. Let _has_ be Call(_hasCheck_, _set_, « _nextValue_.[[Value]] »)
+        1. Let _has_ be Call(_hasCheck_, _set_, « _nextValue_ »)
         1. If _has_ is an abrupt completion, return ? IteratorClose(_iter_, _has_)
         1. If _has_ is *true*,
-            1. Let _status_ be Call(_adder_, _newSet_, « _nextValue_.[[Value]] »)
+            1. Let _status_ be Call(_adder_, _newSet_, « _nextValue_ »)
             1. If _status_ is an abrupt completion, return ? IteratorClose(_iter_, _status_)
 </emu-alg>
