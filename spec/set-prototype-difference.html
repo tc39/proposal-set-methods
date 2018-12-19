@@ -13,6 +13,6 @@
         1. Let _next_ be IteratorStep(_iter_).
         2. If _next_ is *false*, return _newSet_.
         3. Let _nextValue_ be ? IteratorValue(_next_).
-        4. Let _status_ be Call(_remover_, _newSet_, « _nextValue_.[[Value]] »)
+        4. Let _status_ be Call(_remover_, _newSet_, « _nextValue_ »)
         5. If _status_ is an abrupt completion, return ? IteratorClose(_iter_, _status_)
 </emu-alg>

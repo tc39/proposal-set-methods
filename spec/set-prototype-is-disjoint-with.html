@@ -3,17 +3,15 @@
 <emu-alg>
     1. Let _set_ be the *this* value.
     1. If Type(_set_) is not Object, throw a *TypeError* exception.
-    1. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
-    1. Let _entries_ be the List that is _set_.[[SetData]].
-    1. If Type(_iterable_) is not Object, throw a *TypeError* exception.
-    1. If _iterable_ does not have [[SetData]] internal slot,
-        1. Let _otherSet_ be ? Construct(%Set%, _iterable_).
-    1. Else, let _otherSet_ be _iterable_.
-    1. Let _hasCheck_ be ? Get(_otherSet_, "has").
+    1. Let _hasCheck_ be ? Get(_set_, "has").
     1. If IsCallable(_hasCheck_) is *false*, throw a *TypeError* exception.
-    1. For each _e_ that is an element of _entries_, do
-        1. Let _has_ be ? Call(_hasCheck_, _otherSet_, « e »)
+    1. Let _iter_ be ? GetIterator(_iterable_).
+    1. If _iter_ is undefined, throw a *TypeError* exception.
+    1. Repeat,
+        1. Let _next_ be IteratorStep(_iter_).
+        1. If _next_ is *false*, return *true*.
+        1. Let _nextValue_ be ? IteratorValue(_next_).
+        1. Let _has_ be ? Call(_hasCheck_, _set_, « _nextValue_ »).
+        1. If _has_ is an abrupt completion, return ? IteratorClose(_iter_, _has_).
         1. If _has_ is *true*, return *false*.
-    1. return *true*.
-
 </emu-alg>
