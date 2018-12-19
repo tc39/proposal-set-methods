@@ -3,7 +3,6 @@
 <emu-alg>
     1. Let _set_ be the *this* value.
     1. If Type(_set_) is not Object, throw a *TypeError* exception.
-    1. If _set_ does not have a [[SetData]] internal slot, throw a *TypeError* exception.
     1. Let _hasCheck_ be ? Get(_set_, "has").
     1. If IsCallable(_hasCheck_) is *false*, throw a *TypeError* exception.
     1. Let _iter_ be ? GetIterator(_iterable_).
