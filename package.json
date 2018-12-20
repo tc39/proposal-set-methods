@@ -17,13 +17,9 @@
     "url": "git+https://github.com/Ginden/set-methods.git"
   },
   "keywords": [],
-  "author": "Michał Wadas <michalwadas@gmail.com>",
+  "author": "Michał Wadas <michalwadas@gmail.com>, Sathya Gunasekaran <gsathya@chromium.org>",
   "bugs": {
     "url": "https://github.com/tc39/proposal-set-methods/issues"
   },
-  "homepage": "https://github.com/tc39/proposal-set-methods#readme",
-  "dependencies": {
-    "chai": "^4.1.0",
-    "mocha": "^3.5.0"
-  }
+  "homepage": "https://github.com/tc39/proposal-set-methods#readme"
 }
