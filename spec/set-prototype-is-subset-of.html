@@ -7,7 +7,7 @@
     1. Let _entries_ be the List that is _set_.[[SetData]].
     1. If Type(_iterable_) is not Object, throw a *TypeError* exception.
     1. If _iterable_ does not have [[SetData]] internal slot,
-        1. Let _otherSet_ be Construct(%Set%, _iterable_).
+        1. Let _otherSet_ be ? Construct(%Set%, _iterable_).
     1. Else, let _otherSet_ be _iterable_.
     1. Let _hasCheck_ be ? Get(_otherSet_, "has").
     1. If IsCallable(_hasCheck_) is *false*, throw a *TypeError* exception.
