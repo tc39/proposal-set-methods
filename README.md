@@ -15,7 +15,7 @@ New methods based on set theory are added to `Set.prototype`.
   * `Set.prototype.difference(iterable)` - method creates new `Set` without elements present in `iterable`.
   * `Set.prototype.symmetricDifference(iterable)` - returns `Set` of elements found only in either `this` or in `iterable`.
   * `Set.prototype.isSubsetOf(iterable)`
-  * `Set.prototype.isDisjoinWith(iterable)`
+  * `Set.prototype.isDisjointWith(iterable)`
   * `Set.prototype.isSupersetOf(iterable)`
 
 
