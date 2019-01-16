@@ -1,0 +1,11 @@
+<p> The abstract operation CreateListFromIterable is used to create a List value whose elements are provided by _iterable_. It performs the following steps:</p>
+
+<emu-alg>
+    1. Let _result_ be a new empty List.
+    1. Let _iteratorRecord_ be ? GetIterator(_iterable_).
+    1. Repeat,
+        1. Let _next_ be ? IteratorStep(_iteratorRecord_).
+        2. If _next_ is *false*, return _result_.
+        3. Let _nextValue_ be ? IteratorValue(_next_).
+        4. Append _nextValue_ as the last element of _result_.
+</emu-alg>

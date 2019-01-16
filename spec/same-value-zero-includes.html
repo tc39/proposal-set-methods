@@ -1,0 +1,8 @@
+<p> The abstract operation SameValueZeroIncludes takes two arguments, a List _list_ of ECMAScript language values and an ECMAScript language value _value_. It performs the following steps:</p>
+
+<emu-alg>
+    1. For each element _e_ of _list_, do
+        1. If _e_ is not ~empty~ and SameValueZero(_e_, _value_) is *true*, then
+            1. Return *true*.
+    1. Return *false*.
+</emu-alg>
