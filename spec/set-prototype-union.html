@@ -2,9 +2,7 @@
 
 <emu-alg>
     1. Let _set_ be the *this* value.
-    1. If Type(_set_) is not Object, throw a *TypeError* exception.
-    1. Let _Ctr_ be ? SpeciesConstructor(_set_, %Set%).
-    1. Let _newSet_ be ? Construct(_Ctr_, _set_).
+    1. Let _newSet_ be ? SetSpeciesCreate(_set_, _set_).
     1. Let _adder_ be ? Get(_newSet_, "add").
     1. Return ? AddEntryFromIterable(_newSet_, _iterable_, _adder_).
 </emu-alg>

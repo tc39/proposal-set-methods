@@ -1,0 +1,14 @@
+<p>
+    The abstract operation SetSpeciesCreate takes an _set_ argument and an optional argument _iterable_.
+    The abstract operation SetSpeciesCreate creates new *Set* from existing object.
+    Construction occurs according to the following algorithm:</p>
+
+
+<emu-alg>
+    1. If Type(_set_) is not Object, throw a *TypeError* exception.
+    2. Let _Ctr_ be ? SpeciesConstructor(_set_, %Set%).
+    3. If _iterable_ is present, let _newSet_ be ? Construct(_Ctr_, « iterable »).
+    4. Else, let _newSet_ be ? Construct(_Ctr_, _set_,)
+    5. Let _newSet_ be ? Construct(_Ctr_, _set_).
+    6. Return _newSet_.
+</emu-alg>
