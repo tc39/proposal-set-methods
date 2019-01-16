@@ -8,8 +8,7 @@
     1. Let _hasCheck_ be ? Get(_otherSet_, "has").
     1. If IsCallable(_hasCheck_) is *false*,
         1. Let _otherSet_ be ? Construct(%Set%, _iterable_).
-        1. Let _hasCheck_ be ? Get(_otherSet_, "has").
-        1. If IsCallable(_hasCheck_) is *false*, throw a *TypeError* exception.
+        1. Let _hasCheck_ be <emu-xref href="#sec-set.prototype.has">%SetProto_has%</emu-xref>.
     1. Repeat,
         1. Let _next_ be ? IteratorStep(_iteratorRecord_).
         1. If _next_ is *false*, return *true*.
