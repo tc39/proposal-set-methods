@@ -103,9 +103,12 @@ Using `.delete` is algorithm choice and probably will be removed soon, because o
 
 ### Java
 
-#### `Set`
+#### `AbstractSet`
 
-`Set` interface is very limited, so it can't be used as our inspiration.
+> any class which extends [AbstractSet](https://docs.oracle.com/javase/10/docs/api/java/util/AbstractSet.html) and provides add, remove, size, and iterator methods (and whose iterators provide remove) will get the right behavior for a host of other methods, including containsAll (effectively isSupersetOf), retainAll (effectively a mutating intersection), etc.
+
+> The same is true for the concrete implementations: if you subclass HashSet and override contains, for example, the containsAll method which your subclass will inherit will behave correctly.
+
 
 #### Stream API
 
@@ -117,7 +120,9 @@ Even though `Stream` implements most of methods in this proposal, it's more simi
 
 ### C# HashSet
 
-[`HashSet`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1) inherits set methods from [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1). Therefore, it uses approach more similar to "minimal core", because no `HashSet` internals are touched directly.
+[`HashSet`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1) inherits set methods from [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1).
+
+Therefore, it uses approach more similar to "minimal core", because no `HashSet` internals are touched directly.
 
 ### F# Set
 
@@ -186,4 +191,15 @@ Python `set` methods use "per-method override" approach.
 [Source code](https://github.com/facebook/hhvm/blob/ef523aef97e38c3a3d4341f4f8c3dcb6468d978d/hphp/runtime/ext/collections/ext_collections-set.php#L47)
 
 `HH\Set` implements only `difference` method. It delegates to `removeAll` method, but `HH\Set` class is *final*.
+
+## Summary
+
+|  Language | Used method             |  Notes                                                                 |
+|-----------|-------------------------|------------------------------------------------------------------------|
+|  Java     | Minimal core            |                                                                        |
+| C#        | Similar to minimal core | Methods are inherited from IEnumerable and don't touch class internals |
+| F#        | Final class             | Internally minimal core is used                                        |
+| Ruby      | Minimal core            |                                                                        |
+|  Python   | per-method override     |                                                                        |
+| Hack      | Final class             | Internally minimal core is used                                        |
 
