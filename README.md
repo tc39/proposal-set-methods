@@ -41,7 +41,7 @@ New methods based on set theory are added to `Set.prototype`.
 * Very similar API was found in popular [Collections.js](https://www.npmjs.com/package/collections) (205k downloads per month)
 * This proposal is inspired by [Set<T> API from Immutable.js](https://facebook.github.io/immutable-js/docs/#/Set) (3M downloads per month)
 
-## Comparision with Immutable.js
+## Comparison with Immutable.js
 
 * No static `intersection`, `union` methods in this proposal
 * `union`, `intersection`, `difference` takes single argument
