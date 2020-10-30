@@ -37,7 +37,7 @@ New methods based on set theory are added to `Set.prototype`.
 * no new syntax
 # Adoption
 
-* No npm package duplicating this proposal was found
+* [Zet](https://github.com/terkelg/zet) implements the features of this proposal. It includes static versions of all methods, and also implements `map`, `filter` and `reduce` for `Set`s.
 * Very similar API was found in popular [Collections.js](https://www.npmjs.com/package/collections) (205k downloads per month)
 * This proposal is inspired by [Set<T> API from Immutable.js](https://facebook.github.io/immutable-js/docs/#/Set) (3M downloads per month)
 
