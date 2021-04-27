@@ -13,7 +13,7 @@ You should be able to override all methods that you want to work properly, and t
 
 [Avoid "delete" and "add"](https://github.com/tc39/proposal-set-methods/issues/50)
 
-[TC39 notes](https://github.com/rwaldron/tc39-notes/blob/master/es9/2019-01/jan-29.md#update-on-set-methods)
+[TC39 notes](https://github.com/tc39/notes/blob/master/meetings/2019-01/jan-29.md#update-on-set-methods)
 
 [rekey proposal](https://github.com/tc39/proposal-richer-keys/tree/master/collection-rekey)
 
