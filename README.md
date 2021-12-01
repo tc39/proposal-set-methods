@@ -2,7 +2,7 @@
 
 See [formal spec WIP](https://tc39.github.io/proposal-set-methods/).
 
-See [proposal extending Set and Map with Array-like methods](https://github.com/tc39/proposal-collection-methods).
+For `set.map()` see [proposal extending Set and Map with Array-like methods](https://github.com/tc39/proposal-collection-methods).
 
 # Proposal
 
@@ -17,9 +17,12 @@ New methods based on set theory are added to `Set.prototype`.
   * `Set.prototype.isSubsetOf(iterable)`
   * `Set.prototype.isDisjointFrom(iterable)`
   * `Set.prototype.isSupersetOf(iterable)`
+  
 
+# TC39 meeting notes
 
-
+* [May 2018](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2018-05/may-22.md#set-methods)
+* [January 2019](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2019-01/jan-29.md#update-on-set-methods)
 
 # (Semi)relevant previous discussions
 
