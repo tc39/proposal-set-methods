@@ -4,12 +4,13 @@
   "description": "New Set methods proposal for JavaScript (build setup only)",
   "license": "Fair",
   "scripts": {
-    "spec": "ecmarkup spec/index.html docs/index.html --js docs/ecmarkup.js --css docs/ecmarkup.css",
-    "watch": "ecmarkup --watch spec/index.html out/index.html --js out/ecmarkup.js --css out/ecmarkup.css",
-    "test": "mocha -r ./polyfill.js test/*.spec.js"
+    "build": "npm run build-loose -- --strict",
+    "build-loose": "node -e 'fs.mkdirSync(\"build\", { recursive: true })' && ecmarkup --load-biblio @tc39/ecma262-biblio --verbose spec/index.html build/index.html --js-out build/ecmarkup.js --css-out build/ecmarkup.css --lint-spec",
+    "format": "emu-format --write 'spec/*.html'"
   },
   "devDependencies": {
-    "ecmarkup": "^9.6.3"
+    "@tc39/ecma262-biblio": "^2.1.2407",
+    "ecmarkup": "^15.0.0"
   },
   "version": "1.0.0",
   "repository": {
