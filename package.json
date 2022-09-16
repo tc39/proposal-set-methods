@@ -9,7 +9,7 @@
     "test": "mocha -r ./polyfill.js test/*.spec.js"
   },
   "devDependencies": {
-    "ecmarkup": "^9.6.3"
+    "ecmarkup": "^15.0.0"
   },
   "version": "1.0.0",
   "repository": {
