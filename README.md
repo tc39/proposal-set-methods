@@ -1,68 +1,43 @@
-# New Set methods
+# Set Methods for JavaScript
 
-See [formal spec WIP](https://tc39.github.io/proposal-set-methods/).
+This is a proposal to add methods like union and intersection to JavaScript's built-in `Set` class.
 
-For `set.map()` see [proposal extending Set and Map with Array-like methods](https://github.com/tc39/proposal-collection-methods).
+## Proposal
 
-# Proposal
+This would add the following methods:
 
-This proposal does not change syntax of language. 
+  * `Set.prototype.intersection(other)`
+  * `Set.prototype.union(other)`
+  * `Set.prototype.difference(other)`
+  * `Set.prototype.symmetricDifference(other)`
+  * `Set.prototype.isSubsetOf(other)`
+  * `Set.prototype.isSupersetOf(other)`
+  * `Set.prototype.isDisjointFrom(other)`
 
-New methods based on set theory are added to `Set.prototype`.
+These methods would all require their arguments to be a Set, or at least something which looks like a Set in terms of having a numeric `size` property as well as `keys` and `has` methods.
 
-  * `Set.prototype.intersection(iterable)` - method creates new `Set` instance by set intersection operation.
-  * `Set.prototype.union(iterable)` - method creates new `Set` instance by set union operation.
-  * `Set.prototype.difference(iterable)` - method creates new `Set` without elements present in `iterable`.
-  * `Set.prototype.symmetricDifference(iterable)` - returns `Set` of elements found only in either `this` or in `iterable`.
-  * `Set.prototype.isSubsetOf(iterable)`
-  * `Set.prototype.isDisjointFrom(iterable)`
-  * `Set.prototype.isSupersetOf(iterable)`
-  
+See [details.md](./details.md) for details of current decisions made in this proposal.
 
-# TC39 meeting notes
+## TC39 meeting notes
 
 * [May 2018](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2018-05/may-22.md#set-methods)
 * [January 2019](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2019-01/jan-29.md#update-on-set-methods)
+* [March 2022](https://github.com/tc39/notes/blob/6f7e075341e435f22777b07a3ee5141442d2d8a7/meetings/2022-03/mar-31.md#extending-built-ins) - discussion of how to extend built-ins in general
+* [July 2022](https://github.com/tc39/notes/blob/6f7e075341e435f22777b07a3ee5141442d2d8a7/meetings/2022-07/jul-20.md#set-methods-how-to-access-properties-of-the-argument)
 
-# (Semi)relevant previous discussions
+## (Semi)relevant previous discussions
 
+* [proposal-rm-builtin-subclassing](https://github.com/tc39/proposal-rm-builtin-subclassing)
 * [Map#map and Map#filter](https://github.com/tc39/ecma262/pull/13)
 * [Map.prototype.map and Map.prototype.filter (spec) + Set](https://esdiscuss.org/notes/2014-11-19)
 * [Map: filter/map and more](https://esdiscuss.org/topic/map-filter-map-and-more)
 * [Original topic regarding this proposal](https://esdiscuss.org/topic/new-set-prototype-methods)
 * [Newer topic regarding this proposal](https://esdiscuss.org/topic/new-set-methods-again)
- 
 
-# Motivations
-
-* reduces need to depend on [Immutable.js `Set<T>`](https://facebook.github.io/immutable-js/docs/#/Set)
-* reduces boilerplate code when dealing with common use cases of `Set`
-* no new syntax
-# Adoption
-
-* [Zet](https://github.com/terkelg/zet) implements the features of this proposal. It includes static versions of all methods, and also implements `map`, `filter` and `reduce` for `Set`s.
-* Very similar API was found in popular [Collections.js](https://www.npmjs.com/package/collections) (205k downloads per month)
-* This proposal is inspired by [Set<T> API from Immutable.js](https://facebook.github.io/immutable-js/docs/#/Set) (3M downloads per month)
-
-## Comparison with Immutable.js
-
-* No static `intersection`, `union` methods in this proposal
-* `union`, `intersection`, `difference` takes single argument
 
 ## Comparison with other languages
 
 See [other languages document](./other-languages.md) to get overview of `Set` methods in other languages.
-
-
-    
-## Not included in this proposal but worth considering
-
-* Static `Set.union(...iterables)`, `Set.intersection(...iterables)`
-
-## Polyfill
-
-* [core-js/packages/core-js/features/set/](https://github.com/zloirock/core-js/tree/master/packages/core-js/features/set)
-* [set-extensions](https://github.com/jankapunkt/js-set-extension)
 
 ## Naming
 

@@ -3,6 +3,7 @@
 This document is created to discuss [issue raised on TC39 meeting](https://docs.google.com/presentation/d/1BeqsmXGPm_GEAApnpIfVZd3KTOykS4tQVQ7FvYTDtHg/edit#slide=id.g4e7e69452c_0_386).
 
 ### Minimal core
+
 You should be able to override a core set of methods, then all new methods added in this proposal will automatically work.
 
 
@@ -61,7 +62,7 @@ These are quotes from notes and issues in this repository. If I have misquoted a
 > I continue to be struck by the over-complexity that we are injecting into the spec, in the name of genericism, subclassability, and the desire to touch the public API as many times as possible in order to give other classes (or other thisArgs) a chance to insert their own behaviors. As someone who did the same thing with promises in ES2015, and lived to regret it greatly, it's heartbreaking to see those same patterns propagated further. I'd hoped we'd do things differently going forward.
 > (...)
 > The guiding principles, which I think are fairly generally applicable, are:
-  
+
 > * Convert from user-hookable objects (`Set` or iterable) to spec-internal data structures ASAP, "at the boundary".
 > * Operate entirely on the spec-internal data structures for the actual algorithm you're performing.
 > * Convert back to user-hookable objects right before returning to the caller, no sooner
@@ -86,7 +87,7 @@ These are quotes from notes and issues in this repository. If I have misquoted a
 ~ @domenic
 
 > I did part of the work on the implementation of ES6 RegExp and Array subclassing in V8, and I deeply regret it. To avoid performance regressions while adding these observable points, we ended up adding "performance cliffs": The algorithm was something like, check whether anyone is observing it, if not take the fast path, otherwise take a new, slow path. Since my work there (which I'm not proud of at all), my colleagues in the V8 team have gone back and sped up many of those slow paths, but the performance difference remains, and an incredible amount of engineering effort went into this project.
-  
+
 > Meanwhile, years later, it's still not clear what kind of software engineering benefit those changes brought to programmers. I don't get the impression that lots of people are deliberately subclassing `RegExp` and overriding `exec` for memoization. And if they do, they will find their RegExp operations run more slowly.
 
 ~ @littledan
@@ -116,7 +117,7 @@ Using `.delete` is algorithm choice and probably will be removed soon, because o
 
 [Interface Stream<T>](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html)
 
-Even though `Stream` implements most of methods in this proposal, it's more similar to [iterator helpers proposal](https://github.com/tc39/proposal-iterator-helpers), as it's generic and not tied to `Set`. 
+Even though `Stream` implements most of methods in this proposal, it's more similar to [iterator helpers proposal](https://github.com/tc39/proposal-iterator-helpers), as it's generic and not tied to `Set`.
 
 ### C# HashSet
 
@@ -140,14 +141,14 @@ let subset comparer a b  = forall (fun x -> mem comparer x b) a
 
 let psubset comparer a b  = forall (fun x -> mem comparer x b) a && exists (fun x -> not (mem comparer x a)) b
 
-let rec filterAux comparer f s acc = 
-    match s with 
-    | SetNode(k,l,r,_) -> 
-        let acc = if f k then add comparer k acc else acc 
+let rec filterAux comparer f s acc =
+    match s with
+    | SetNode(k,l,r,_) ->
+        let acc = if f k then add comparer k acc else acc
         filterAux comparer f l (filterAux comparer f r acc)
     | SetOne(k) -> if f k then add comparer k acc else acc
-    | SetEmpty -> acc 
-    
+    | SetEmpty -> acc
+
 let filter comparer f s = filterAux comparer f s SetEmpty
 
 ```
@@ -176,7 +177,7 @@ def superset?(set)
 end
 ```
 
-Therefore `superset` method call `this.all` (`.every` equivalent) and `this.is_a`. 
+Therefore `superset` method call `this.all` (`.every` equivalent) and `this.is_a`.
 
 ### Python set
 
