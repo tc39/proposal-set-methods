@@ -102,23 +102,18 @@ contributors: Michał Wadas, Sathya Gunasekaran, Kevin Gibbons
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
-    1. Let _otherElements_ be a new empty List.
+    1. Let _resultSetData_ be a copy of _O_.[[SetData]].
     1. Let _next_ be *true*.
     1. Repeat, while _next_ is not *false*,
       1. Set _next_ to ? IteratorStep(_keysIter_).
       1. If _next_ is not *false*, then
         1. Let _nextValue_ be ? IteratorValue(_next_).
         1. If _nextValue_ is *-0*<sub>𝔽</sub>, set _nextValue_ to *+0*<sub>𝔽</sub>.
-        1. NOTE: Because _other_ is an arbitrary object, it is possible for its *"keys"* iterator to produce the same value more than once.
-        1. If SetDataHas(_otherElements_, _nextValue_) is *false*, then
-          1. Append _nextValue_ to _otherElements_.
-    1. Let _resultSetData_ be a new empty List.
-    1. For each element _e_ of _O_.[[SetData]], do
-      1. If _e_ is not ~empty~ and SetDataHas(_otherElements_, _e_) is *false*, then
-        1. Append _e_ to _resultSetData_.
-    1. For each element _e_ of _otherElements_, do
-      1. If SetDataHas(_O_.[[SetData]], _e_) is *false*, then
-        1. Append _e_ to _resultSetData_.
+        1. Let _inResult_ be SetDataHas(_resultSetData_, _nextValue_).
+        1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, then
+          1. If _inResult_ is *true*, remove _nextValue_ from _resultSetData_.
+        1. Else,
+          1. If _inResult_ is *false*, append _nextValue_ to _resultSetData_.
     1. Let _result_ be OrdinaryObjectCreate(%Set.prototype%, « [[SetData]] »).
     1. Set _result_.[[SetData]] to _resultSetData_.
     1. Return _result_.
