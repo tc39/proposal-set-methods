@@ -42,7 +42,15 @@ But all methods in this proposal always get all three of the above-named propert
 
 Also, just using `.keys` would mean that passing an array to `.union` would give the union with the _indices_ of the array, which was held to be confusing. Requiring `.size` to be defined means that arrays are rejected instead of that more confusing behavior.
 
-### Rejecting iterables
+## Time complexity
+
+Intersecting a small set with a large set should always take time proportional to the smaller set, regardless of whether the receiver or the argument is smaller.
+
+That is to say, in `.intersection`, when `this` is smaller than the argument it is more efficient to iterate `this` and check if each member is an element of the argument; conversely, when `this` is larger than the argument it is more efficient to iterate the argument and check if each member is an element of `this`. This means the observable behavior of `.intersection` depends on the relative sizes of the two collections. That's necessary to achieve the desired time complexity.
+
+`.difference` has a similar branch; in that case, while the time complexity taking into account the time taken to copy the receiver cannot be less than than proportional to the size of the receiver, the number of user-observable function calls can still be minimized by branching on which of the two sets is larger, just as for `.intersection`.
+
+## Rejecting iterables
 
 In principle, we could fall back to iterating the argument and converting it to a `Set` when the argument does not implement all of `.size`, `.keys`, and `.has`. But that has subtle  performance implications. Specifically, when the receiver is significantly smaller than the argument, `.intersection` requires time proportionate to the size of the receiver, not the argument. Iterating the argument to produce a `Set` would therefore be potentially much slower than passing a similarly-sized `Set`. So we decided that users should have to do that potentially-expensive iteration themselves, i.e., to do `.intersection(new Set(iterable))` instead of just `.intersection(iterable)`.
 
@@ -53,3 +61,9 @@ All methods are fetched eagerly and stored, rather than being looked up per iter
 ## Single argument
 
 All of these methods take only a single argument. Some of them, like `union`, could in theory take multiple values. This proposal currently takes the position that this use case is rare enough to not be worth worrying about; invoking the method repeatedly is held to be sufficient.
+
+## Order
+
+For each of the `Set`-producing methods, in the resulting `Set`s all elements which were in the receiver appear first, in the order in which they appeared in the receiver, followed by elements which were only in the argument, in the order in which they appeared in the argument.
+
+That this is possible for `intersection` in time proportional only to the size of the result (and not the receiver) is not obvious, but in <a href="https://matrixlogs.bakkot.com/TC39_Delegates/2022-07-11#L0-L54">this discussion</a> it was determined that it ought to be.

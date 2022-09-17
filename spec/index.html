@@ -58,10 +58,15 @@ markEffects: true
           1. Let _inThis_ be SetDataHas(_O_.[[SetData]], _nextValue_).
           1. If _alreadyInResult_ is *false* and _inThis_ is *true*, then
             1. Append _nextValue_ to _resultSetData_.
+      1. Assert: Every element in _resultSetData_ is also in _O_.[[SetData]], and no element appears more than once.
+      1. [id="step-intersection-order"] Order the elements of _resultSetData_ so that they are in the same order in that list as they are in _O_.[[SetData]].
     1. Let _result_ be OrdinaryObjectCreate(%Set.prototype%, « [[SetData]] »).
     1. Set _result_.[[SetData]] to _resultSetData_.
     1. Return _result_.
   </emu-alg>
+  <emu-note>
+    It is expected that implementations can achieve the order required by step <emu-xref href="#step-intersection-order"></emu-xref> in time proportional only to the size of the output, not _O_. For example, using <a href="https://wiki.mozilla.org/User:Jorend/Deterministic_hash_tables">this data structure</a>, the relative order of two elements within _O_.[[SetData]] can be determined without needing to iterate the entire `dataTable` array by directly comparing the pointers to their entries in `dataTable`.
+  </emu-note>
 </emu-clause>
 
 <emu-clause id="sec-set.prototype.difference">
