@@ -1,14 +1,16 @@
 # Minimal core vs. per method override
 
-This document is created to discuss [issue raised on TC39 meeting](https://docs.google.com/presentation/d/1BeqsmXGPm_GEAApnpIfVZd3KTOykS4tQVQ7FvYTDtHg/edit#slide=id.g4e7e69452c_0_386).
+This document was historically created to discuss the question of how the new methods would access data from `this`, which has implications for subclassing as discussed in [this presentation](https://docs.google.com/presentation/d/1BeqsmXGPm_GEAApnpIfVZd3KTOykS4tQVQ7FvYTDtHg/edit#slide=id.g4e7e69452c_0_386).
+
+After a great deal of discussion, the committee ultimately settled on the "per method override" option.
 
 ### Minimal core
 
 You should be able to override a core set of methods, then all new methods added in this proposal will automatically work.
 
-
 ### Per method override
-You should be able to override all methods that you want to work properly, and then they will work properly.
+
+A subclass which changes the core behavior of the class may need to override all methods.
 
 ## Worth reading
 
@@ -92,12 +94,6 @@ These are quotes from notes and issues in this repository. If I have misquoted a
 
 ~ @littledan
 
-
-## Enforcing protocols on receiver (`this`)
-
-Currently this proposal requires `this` to have `.has`, `.delete` and `.add` methods.
-
-Using `.delete` is algorithm choice and probably will be removed soon, because of [issue #56](https://github.com/tc39/proposal-set-methods/issues/56) (Set.prototype.symmetricDifference spec has unexpected behavior when given iterable containing duplicate elements).
 
 
 ## Prior art

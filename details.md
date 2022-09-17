@@ -49,3 +49,7 @@ In principle, we could fall back to iterating the argument and converting it to 
 ## Caching methods up-front
 
 All methods are fetched eagerly and stored, rather than being looked up per iteration of the loop. This greatly simplifies optimization and is consistent with [what we do elsewhere](https://github.com/tc39/ecma262/issues/1505#issuecomment-481778163).
+
+## Single argument
+
+All of these methods take only a single argument. Some of them, like `union`, could in theory take multiple values. This proposal currently takes the position that this use case is rare enough to not be worth worrying about; invoking the method repeatedly is held to be sufficient.

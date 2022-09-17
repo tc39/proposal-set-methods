@@ -1,10 +1,10 @@
 # `.union`, `.intersection` etc. desired signature
 
-Signature of these functions isn't obvious. They can accept:
+These functions could in theory accept:
 
 * single Set
   * best possible performance
-  * would slowdown adoption
+  * requires user to convert iterables to Sets before passing
 * multiple Sets
   * looks like rare use case
 * Single iterable
@@ -12,3 +12,5 @@ Signature of these functions isn't obvious. They can accept:
 * Multiple iterables
   * Used by Immutable.js
   * Certain algorithms can be ineffective without converting arguments to `Set` instances (`intersection` without at least `log(n)` random access seems to be too slow for real world)
+
+Currently this proposal takes the "single Set" option. See [details.md](./details.md) for details of this and other decisions.
