@@ -18,6 +18,8 @@ These methods would all require their arguments to be a Set, or at least somethi
 
 See [details.md](./details.md) for details of current decisions made in this proposal.
 
+Rendered spec text is available [here](https://tc39.es/proposal-set-methods/).
+
 ## TC39 meeting notes
 
 * [May 2018](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2018-05/may-22.md#set-methods)
@@ -49,4 +51,3 @@ We decided to choose:
 * **Intersection** - **`intersection`**
 * **Union** - **`union`**
 * **Difference** - **`difference`**
-
