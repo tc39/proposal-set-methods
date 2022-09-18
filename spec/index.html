@@ -42,7 +42,7 @@ markEffects: true
     1. If _thisSize_ ≤ _otherRec_.[[Size]], then
       1. For each element _e_ of _O_.[[SetData]], do
         1. If _e_ is not ~empty~, then
-          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]])).
+          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, then
             1. Append _e_ to _resultSetData_.
     1. Else,
@@ -81,7 +81,7 @@ markEffects: true
     1. If _thisSize_ ≤ _otherRec_.[[Size]], then
       1. For each element _e_ of _resultSetData_, do
         1. If _e_ is not ~empty~, then
-          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]])).
+          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, then
             1. Remove _e_ from _resultSetData_.
     1. Else,
@@ -136,7 +136,7 @@ markEffects: true
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ > _otherRec_.[[Size]], return *false*.
     1. For each element _e_ of _O_.[[SetData]], do
-      1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]])).
+      1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
       1. If _inOther_ is *false*, return *false*.
     1. Return *true*.
   </emu-alg>
@@ -169,9 +169,21 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
-    1. For each element _e_ of _O_.[[SetData]], do
-      1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]])).
-      1. If _inOther_ is *true*, return *false*.
+    1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
+    1. If _thisSize_ ≤ _otherRec_.[[Size]], then
+      1. For each element _e_ of _O_.[[SetData]], do
+        1. If _e_ is not ~empty~, then
+          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
+          1. If _inOther_ is *true*, return *false*.
+    1. Else,
+      1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+      1. Let _next_ be *true*.
+      1. Repeat, while _next_ is not *false*,
+        1. Set _next_ to ? IteratorStep(_keysIter_).
+        1. If _next_ is not *false*, then
+          1. Let _nextValue_ be ? IteratorValue(_next_).
+          1. If _nextValue_ is *-0*<sub>𝔽</sub>, set _nextValue_ to *+0*<sub>𝔽</sub>.
+          1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, return *false*.
     1. Return *true*.
   </emu-alg>
 </emu-clause>
