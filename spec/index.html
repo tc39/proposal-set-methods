@@ -58,8 +58,8 @@ markEffects: true
           1. Let _inThis_ be SetDataHas(_O_.[[SetData]], _nextValue_).
           1. If _alreadyInResult_ is *false* and _inThis_ is *true*, then
             1. Append _nextValue_ to _resultSetData_.
-      1. Assert: Every element in _resultSetData_ is also in _O_.[[SetData]], and no element appears more than once.
-      1. [id="step-intersection-order"] Order the elements of _resultSetData_ so that they are in the same order in that list as they are in _O_.[[SetData]].
+      1. NOTE: It is possible for _resultSetData_ not to be a subset of _O_.[[SetData]] at this point because arbitrary code may have been executed by the iterator, including code which modifies _O_.[[SetData]].
+      1. [id="step-intersection-order"] Sort the elements of _resultSetData_ so that all elements which are also in _O_.[[SetData]] are ordered as they are in _O_.[[SetData]], and any additional elements are moved to the end of the list in the same order as they were before sorting _resultSetData_.
     1. Let _result_ be OrdinaryObjectCreate(%Set.prototype%, « [[SetData]] »).
     1. Set _result_.[[SetData]] to _resultSetData_.
     1. Return _result_.
