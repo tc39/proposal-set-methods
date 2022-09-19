@@ -182,7 +182,6 @@ markEffects: true
         1. Set _next_ to ? IteratorStep(_keysIter_).
         1. If _next_ is not *false*, then
           1. Let _nextValue_ be ? IteratorValue(_next_).
-          1. If _nextValue_ is *-0*<sub>𝔽</sub>, set _nextValue_ to *+0*<sub>𝔽</sub>.
           1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, return *false*.
     1. Return *true*.
   </emu-alg>
@@ -303,7 +302,6 @@ markEffects: true
   <dl class="header">
   </dl>
   <emu-alg>
-    1. If _value_ is *-0*<sub>𝔽</sub>, set _value_ to *+0*<sub>𝔽</sub>.
     1. For each element _e_ of _resultSetData_, do
       1. If _e_ is not ~empty~ and SameValueZero(_e_, _value_) is *true*, return *true*.
     1. Return *false*.
