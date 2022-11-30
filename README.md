@@ -2,6 +2,8 @@
 
 This is a proposal to add methods like union and intersection to JavaScript's built-in `Set` class.
 
+It is currently at stage 3.
+
 ## Proposal
 
 This would add the following methods:
