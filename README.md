@@ -29,6 +29,7 @@ Rendered spec text is available [here](https://tc39.es/proposal-set-methods/).
 * [March 2022](https://github.com/tc39/notes/blob/6f7e075341e435f22777b07a3ee5141442d2d8a7/meetings/2022-03/mar-31.md#extending-built-ins) - discussion of how to extend built-ins in general
 * [July 2022](https://github.com/tc39/notes/blob/6f7e075341e435f22777b07a3ee5141442d2d8a7/meetings/2022-07/jul-20.md#set-methods-how-to-access-properties-of-the-argument)
 * [September 2022](https://github.com/tc39/notes/blob/65a82252aa14c273082e7687c6712bb561bc087a/meetings/2022-09/sep-14.md#set-methods-part-iii)
+* [November 2022](https://github.com/tc39/notes/blob/36635060482b1b27bcaff3c950dd9f7b31492dab/meetings/2022-11/nov-30.md#set-methods)
 
 ## (Semi)relevant previous discussions
 
