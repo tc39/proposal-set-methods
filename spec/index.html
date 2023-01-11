@@ -45,11 +45,14 @@ markEffects: true
         1. Let _e_ be _O_.[[SetData]][_index_].
         1. Set _index_ to _index_ + 1.
         1. If _e_ is not ~empty~, then
-          1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
-          1. If _inOther_ is *true*, then
-            1. Append _e_ to _resultSetData_.
-          1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
-          1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
+          1. NOTE: it is possible for earlier calls to _otherRec_.[[Has]] to remove and re-add an element of _O_.[[SetData]], which can cause the same element to be visited twice during this iteration.
+          1. Let _alreadyInResult_ be SetDataHas(_resultSetData_, _e_).
+          1. If _alreadyInResult_ is *false*, then
+            1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
+            1. If _inOther_ is *true*, then
+              1. Append _e_ to _resultSetData_.
+            1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
+            1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Else,
       1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
       1. Let _next_ be *true*.
