@@ -157,7 +157,9 @@ markEffects: true
       1. Set _next_ to ? IteratorStep(_keysIter_).
       1. If _next_ is not *false*, then
         1. Let _nextValue_ be ? IteratorValue(_next_).
-        1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *false*, return *false*.
+        1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *false*, then
+          1. Perform ? IteratorClose(_keysIter_, NormalCompletion(~unused~)).
+          1. Return *false*.
     1. Return *true*.
   </emu-alg>
 </emu-clause>
@@ -182,7 +184,9 @@ markEffects: true
         1. Set _next_ to ? IteratorStep(_keysIter_).
         1. If _next_ is not *false*, then
           1. Let _nextValue_ be ? IteratorValue(_next_).
-          1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, return *false*.
+          1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, then
+            1. Perform ? IteratorClose(_keysIter_, NormalCompletion(~unused~)).
+            1. Return *false*.
     1. Return *true*.
   </emu-alg>
 </emu-clause>
