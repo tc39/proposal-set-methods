@@ -40,11 +40,16 @@ markEffects: true
     1. Let _resultSetData_ be a new empty List.
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ ≤ _otherRec_.[[Size]], then
-      1. For each element _e_ of _O_.[[SetData]], do
+      1. Let _index_ be 0.
+      1. Repeat, while _index_ &lt; _thisSize_,
+        1. Let _e_ be _O_.[[SetData]][_index_].
+        1. Set _index_ to _index_ + 1.
         1. If _e_ is not ~empty~, then
           1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, then
             1. Append _e_ to _resultSetData_.
+          1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
+          1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Else,
       1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
       1. Let _next_ be *true*.
@@ -79,11 +84,14 @@ markEffects: true
     1. Let _resultSetData_ be a copy of _O_.[[SetData]].
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ ≤ _otherRec_.[[Size]], then
-      1. For each element _e_ of _resultSetData_, do
+      1. Let _index_ be 0.
+      1. Repeat, while _index_ &lt; _thisSize_,
+        1. Let _e_ be _resultSetData_[_index_].
+        1. Set _index_ to _index_ + 1.
         1. If _e_ is not ~empty~, then
           1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, then
-            1. Remove _e_ from _resultSetData_.
+            1. Set _resultSetData_[_index_] to ~empty~.
     1. Else,
       1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
       1. Let _next_ be *true*.
@@ -135,9 +143,14 @@ markEffects: true
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ > _otherRec_.[[Size]], return *false*.
-    1. For each element _e_ of _O_.[[SetData]], do
+    1. Let _index_ be 0.
+    1. Repeat, while _index_ &lt; _thisSize_,
+      1. Let _e_ be _O_.[[SetData]][_index_].
+      1. Set _index_ to _index_ + 1.
       1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
       1. If _inOther_ is *false*, return *false*.
+      1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
+      1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Return *true*.
   </emu-alg>
 </emu-clause>
@@ -173,10 +186,15 @@ markEffects: true
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ ≤ _otherRec_.[[Size]], then
-      1. For each element _e_ of _O_.[[SetData]], do
+      1. Let _index_ be 0.
+      1. Repeat, while _index_ &lt; _thisSize_,
+        1. Let _e_ be _O_.[[SetData]][_index_].
+        1. Set _index_ to _index_ + 1.
         1. If _e_ is not ~empty~, then
           1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, return *false*.
+          1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
+          1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Else,
       1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
       1. Let _next_ be *true*.
