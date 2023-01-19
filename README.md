@@ -55,3 +55,7 @@ We decided to choose:
 * **Intersection** - **`intersection`**
 * **Union** - **`union`**
 * **Difference** - **`difference`**
+
+## Polyfills
+
+ - [core-js](https://github.com/zloirock/core-js#new-set-methods)
