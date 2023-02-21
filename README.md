@@ -62,7 +62,7 @@ We decided to choose:
  - [es-shims](https://github.com/es-shims):
    - [difference](https://npmjs.com/set.prototype.difference)
    - [intersection](https://npmjs.com/set.prototype.intersection)
-   - [symmetricDifference](https://npmjs.com/set.prototype.symmetricDifference)
+   - [symmetricDifference](https://npmjs.com/set.prototype.symmetricdifference)
    - [union](https://npmjs.com/set.prototype.union)
    - [isDisjointFrom](https://npmjs.com/set.prototype.isdisjointfrom)
    - [isSubsetOf](https://npmjs.com/set.prototype.issubsetof)
