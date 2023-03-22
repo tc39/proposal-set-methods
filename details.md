@@ -64,6 +64,6 @@ All of these methods take only a single argument. Some of them, like `union`, co
 
 ## Order
 
-For each of the `Set`-producing methods, in the resulting `Set`s all elements which were in the receiver appear first, in the order in which they appeared in the receiver, followed by elements which were only in the argument, in the order in which they appeared in the argument.
+For each of the `Set`-producing methods with the exception of `intersection`, in the resulting `Set`s all elements which were in the receiver appear first, in the order in which they appeared in the receiver, followed by elements which were only in the argument, in the order in which they appeared in the argument.
 
-That this is possible for `intersection` in time proportional only to the size of the result (and not the receiver) is not obvious, but in <a href="https://matrixlogs.bakkot.com/TC39_Delegates/2022-07-11#L0-L54">this discussion</a> it was determined that it ought to be.
+It was determined that this order is not efficiently achievable for `intersection` in all implementations, so for that method only, the order is instead the order of the elements within the smaller of the two sets. This means that the order of the resulting set depends on the relative sizes of the two sets, which is a sharp edge, but the committee thought it was the best of the available options.
