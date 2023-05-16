@@ -22,6 +22,10 @@ See [details.md](./details.md) for details of current decisions made in this pro
 
 Rendered spec text is available [here](https://tc39.es/proposal-set-methods/).
 
+## Implementations
+
+This proposal is ready for engines to implement and ship. See [this issue](https://github.com/tc39/proposal-set-methods/issues/78) for current status.
+
 ## TC39 meeting notes
 
 * [May 2018](https://github.com/tc39/notes/blob/8711614630f631cb51dfb803caa087bedfc051a3/meetings/2018-05/may-22.md#set-methods)
