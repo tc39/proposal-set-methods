@@ -26,7 +26,7 @@ Rendered spec text is available [here](https://tc39.es/proposal-set-methods/).
 
 This proposal is ready for engines to implement and ship. See [this issue](https://github.com/tc39/proposal-set-methods/issues/78) for current status.
 
-There are two outstanding issues dealing with edge cases to be discussed at the July plenary, which may ultimately result in slightly tweaked behavior: #84 and #98. These are not expected to cause compat issues.
+There are two outstanding issues dealing with edge cases to be discussed at the July plenary, which may ultimately result in slightly tweaked behavior: [#84](https://github.com/tc39/proposal-set-methods/issues/84) and [#98](https://github.com/tc39/proposal-set-methods/issues/98). These are not expected to cause compat issues.
 
 ## TC39 meeting notes
 
