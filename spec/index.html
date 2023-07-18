@@ -287,6 +287,7 @@ markEffects: true
     1. NOTE: If _rawSize_ is *undefined*, then _numSize_ will be *NaN*.
     1. If _numSize_ is *NaN*, throw a *TypeError* exception.
     1. Let _intSize_ be ! ToIntegerOrInfinity(_numSize_).
+    1. If _intSize_ < 0, throw a *RangeError* exception.
     1. Let _has_ be ? Get(_obj_, *"has"*).
     1. If IsCallable(_has_) is *false*, throw a *TypeError* exception.
     1. Let _keys_ be ? Get(_obj_, *"keys"*).
