@@ -14,7 +14,7 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
-    1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+    1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
     1. Let _resultSetData_ be a copy of _O_.[[SetData]].
     1. Let _next_ be *true*.
     1. Repeat, while _next_ is not *false*,
@@ -54,7 +54,7 @@ markEffects: true
           1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
           1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Else,
-      1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+      1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
       1. Let _next_ be *true*.
       1. Repeat, while _next_ is not *false*,
         1. Set _next_ to ? IteratorStep(_keysIter_).
@@ -91,7 +91,7 @@ markEffects: true
           1. If _inOther_ is *true*, then
             1. Set _resultSetData_[_index_] to ~empty~.
     1. Else,
-      1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+      1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
       1. Let _next_ be *true*.
       1. Repeat, while _next_ is not *false*,
         1. Set _next_ to ? IteratorStep(_keysIter_).
@@ -113,7 +113,7 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
-    1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+    1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
     1. Let _resultSetData_ be a copy of _O_.[[SetData]].
     1. Let _next_ be *true*.
     1. Repeat, while _next_ is not *false*,
@@ -162,7 +162,7 @@ markEffects: true
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
     1. If _thisSize_ &lt; _otherRec_.[[Size]], return *false*.
-    1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+    1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
     1. Let _next_ be *true*.
     1. Repeat, while _next_ is not *false*,
       1. Set _next_ to ? IteratorStep(_keysIter_).
@@ -194,7 +194,7 @@ markEffects: true
           1. NOTE: The number of elements in _O_.[[SetData]] may have increased during execution of _otherRec_.[[Has]].
           1. Set _thisSize_ to the number of elements of _O_.[[SetData]].
     1. Else,
-      1. Let _keysIter_ be ? GetKeysIterator(_otherRec_).
+      1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
       1. Let _next_ be *true*.
       1. Repeat, while _next_ is not *false*,
         1. Set _next_ to ? IteratorStep(_keysIter_).
@@ -293,23 +293,6 @@ markEffects: true
     1. Let _keys_ be ? Get(_obj_, *"keys"*).
     1. If IsCallable(_keys_) is *false*, throw a *TypeError* exception.
     1. Return a new Set Record { [[Set]]: _obj_, [[Size]]: _intSize_, [[Has]]: _has_, [[Keys]]: _keys_ }.
-  </emu-alg>
-</emu-clause>
-
-<emu-clause id="sec-getkeysiterator" type="abstract operation">
-  <h1>
-    GetKeysIterator (
-      _setRec_: a Set Record,
-    ): either a normal completion containing an Iterator Record or a throw completion
-  </h1>
-  <dl class="header">
-  </dl>
-  <emu-alg>
-    1. Let _keysIter_ be ? Call(_setRec_.[[Keys]], _setRec_.[[Set]]).
-    1. If _keysIter_ is not an Object, throw a *TypeError* exception.
-    1. Let _nextMethod_ be ? Get(_keysIter_, *"next"*).
-    1. If IsCallable(_nextMethod_) is *false*, throw a *TypeError* exception.
-    1. Return a new Iterator Record { [[Iterator]]: _keysIter_, [[NextMethod]]: _nextMethod_, [[Done]]: *false* }.
   </emu-alg>
 </emu-clause>
 

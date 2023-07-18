@@ -9,8 +9,8 @@
     "format": "emu-format --write 'spec/*.html'"
   },
   "devDependencies": {
-    "@tc39/ecma262-biblio": "^2.1.2407",
-    "ecmarkup": "^15.0.0"
+    "@tc39/ecma262-biblio": "2.1.2599",
+    "ecmarkup": "^17.0.2"
   },
   "version": "1.0.0",
   "repository": {
