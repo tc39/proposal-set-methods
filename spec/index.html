@@ -308,7 +308,6 @@ markEffects: true
     1. Let _keysIter_ be ? Call(_setRec_.[[Keys]], _setRec_.[[Set]]).
     1. If _keysIter_ is not an Object, throw a *TypeError* exception.
     1. Let _nextMethod_ be ? Get(_keysIter_, *"next"*).
-    1. If IsCallable(_nextMethod_) is *false*, throw a *TypeError* exception.
     1. Return a new Iterator Record { [[Iterator]]: _keysIter_, [[NextMethod]]: _nextMethod_, [[Done]]: *false* }.
   </emu-alg>
 </emu-clause>
