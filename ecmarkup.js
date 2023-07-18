@@ -450,23 +450,66 @@ Menu.prototype.revealInToc = function (path) {
 };
 
 function findActiveClause(root, path) {
-  let clauses = getChildClauses(root);
   path = path || [];
 
-  for (let $clause of clauses) {
-    let rect = $clause.getBoundingClientRect();
+  let visibleClauses = getVisibleClauses(root, path);
+  let midpoint = Math.floor(window.innerHeight / 2);
+
+  for (let [$clause, path] of visibleClauses) {
+    let { top: clauseTop, bottom: clauseBottom } = $clause.getBoundingClientRect();
+    let isFullyVisibleAboveTheFold =
+      clauseTop > 0 && clauseTop < midpoint && clauseBottom < window.innerHeight;
+    if (isFullyVisibleAboveTheFold) {
+      return path;
+    }
+  }
+
+  visibleClauses.sort(([, pathA], [, pathB]) => pathB.length - pathA.length);
+  for (let [$clause, path] of visibleClauses) {
+    let { top: clauseTop, bottom: clauseBottom } = $clause.getBoundingClientRect();
     let $header = $clause.querySelector('h1');
+    let clauseStyles = getComputedStyle($clause);
     let marginTop = Math.max(
-      parseInt(getComputedStyle($clause)['margin-top']),
+      0,
+      parseInt(clauseStyles['margin-top']),
       parseInt(getComputedStyle($header)['margin-top'])
     );
-
-    if (rect.top - marginTop <= 1 && rect.bottom > 0) {
-      return findActiveClause($clause, path.concat($clause)) || path;
+    let marginBottom = Math.max(0, parseInt(clauseStyles['margin-bottom']));
+    let crossesMidpoint =
+      clauseTop - marginTop <= midpoint && clauseBottom + marginBottom >= midpoint;
+    if (crossesMidpoint) {
+      return path;
     }
   }
 
   return path;
+}
+
+function getVisibleClauses(root, path) {
+  let childClauses = getChildClauses(root);
+  path = path || [];
+
+  let result = [];
+
+  let seenVisibleClause = false;
+  for (let $clause of childClauses) {
+    let { top: clauseTop, bottom: clauseBottom } = $clause.getBoundingClientRect();
+    let isPartiallyVisible =
+      (clauseTop > 0 && clauseTop < window.innerHeight) ||
+      (clauseBottom > 0 && clauseBottom < window.innerHeight) ||
+      (clauseTop < 0 && clauseBottom > window.innerHeight);
+
+    if (isPartiallyVisible) {
+      seenVisibleClause = true;
+      let innerPath = path.concat($clause);
+      result.push([$clause, innerPath]);
+      result.push(...getVisibleClauses($clause, innerPath));
+    } else if (seenVisibleClause) {
+      break;
+    }
+  }
+
+  return result;
 }
 
 function* getChildClauses(root) {
@@ -1160,12 +1203,40 @@ function getActiveTocPaths() {
   return [...menu.$menu.querySelectorAll('.active')].map(getTocPath).filter(p => p != null);
 }
 
-function loadStateFromSessionStorage() {
-  if (!window.sessionStorage || typeof menu === 'undefined' || window.navigating) {
+function initTOCExpansion(visibleItemLimit) {
+  // Initialize to a reasonable amount of TOC expansion:
+  // * Expand any full-breadth nesting level up to visibleItemLimit.
+  // * Expand any *single-item* level while under visibleItemLimit (even if that pushes over it).
+
+  // Limit to initialization by bailing out if any parent item is already expanded.
+  const tocItems = Array.from(document.querySelectorAll('#menu-toc li'));
+  if (tocItems.some(li => li.classList.contains('active') && li.querySelector('li'))) {
     return;
   }
-  if (sessionStorage.referencePaneState != null) {
-    let state = JSON.parse(sessionStorage.referencePaneState);
+
+  const selfAndSiblings = maybe => Array.from(maybe?.parentNode.children ?? []);
+  let currentLevelItems = selfAndSiblings(tocItems[0]);
+  let availableCount = visibleItemLimit - currentLevelItems.length;
+  while (availableCount > 0 && currentLevelItems.length) {
+    const nextLevelItems = currentLevelItems.flatMap(li => selfAndSiblings(li.querySelector('li')));
+    availableCount -= nextLevelItems.length;
+    if (availableCount > 0 || currentLevelItems.length === 1) {
+      // Expand parent items of the next level down (i.e., current-level items with children).
+      for (const ol of new Set(nextLevelItems.map(li => li.parentNode))) {
+        ol.closest('li').classList.add('active');
+      }
+    }
+    currentLevelItems = nextLevelItems;
+  }
+}
+
+function initState() {
+  if (typeof menu === 'undefined' || window.navigating) {
+    return;
+  }
+  const storage = typeof sessionStorage !== 'undefined' ? sessionStorage : Object.create(null);
+  if (storage.referencePaneState != null) {
+    let state = JSON.parse(storage.referencePaneState);
     if (state != null) {
       if (state.type === 'ref') {
         let entry = menu.search.biblio.byId[state.id];
@@ -1179,39 +1250,36 @@ function loadStateFromSessionStorage() {
           referencePane.showSDOsBody(sdos, state.id);
         }
       }
-      delete sessionStorage.referencePaneState;
+      delete storage.referencePaneState;
     }
   }
 
-  if (sessionStorage.activeTocPaths != null) {
-    document
-      .getElementById('menu-toc')
-      .querySelectorAll('.active')
-      .forEach(e => {
-        e.classList.remove('active');
-      });
-    let active = JSON.parse(sessionStorage.activeTocPaths);
+  if (storage.activeTocPaths != null) {
+    document.querySelectorAll('#menu-toc li.active').forEach(li => li.classList.remove('active'));
+    let active = JSON.parse(storage.activeTocPaths);
     active.forEach(activateTocPath);
-    delete sessionStorage.activeTocPaths;
+    delete storage.activeTocPaths;
+  } else {
+    initTOCExpansion(20);
   }
 
-  if (sessionStorage.searchValue != null) {
-    let value = JSON.parse(sessionStorage.searchValue);
+  if (storage.searchValue != null) {
+    let value = JSON.parse(storage.searchValue);
     menu.search.$searchBox.value = value;
     menu.search.search(value);
-    delete sessionStorage.searchValue;
+    delete storage.searchValue;
   }
 
-  if (sessionStorage.tocScroll != null) {
-    let tocScroll = JSON.parse(sessionStorage.tocScroll);
+  if (storage.tocScroll != null) {
+    let tocScroll = JSON.parse(storage.tocScroll);
     menu.$toc.scrollTop = tocScroll;
-    delete sessionStorage.tocScroll;
+    delete storage.tocScroll;
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadStateFromSessionStorage);
+document.addEventListener('DOMContentLoaded', initState);
 
-window.addEventListener('pageshow', loadStateFromSessionStorage);
+window.addEventListener('pageshow', initState);
 
 window.addEventListener('beforeunload', () => {
   if (!window.sessionStorage || typeof menu === 'undefined') {
@@ -1224,36 +1292,131 @@ window.addEventListener('beforeunload', () => {
 });
 
 'use strict';
-let decimalBullet = Array.from({ length: 100 }, (a, i) => '' + (i + 1));
-let alphaBullet = Array.from({ length: 26 }, (a, i) => String.fromCharCode('a'.charCodeAt(0) + i));
 
-// prettier-ignore
-let romanBullet = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x', 'xi', 'xii', 'xiii', 'xiv', 'xv', 'xvi', 'xvii', 'xviii', 'xix', 'xx', 'xxi', 'xxii', 'xxiii', 'xxiv', 'xxv'];
-// prettier-ignore
-let bullets = [decimalBullet, alphaBullet, romanBullet, decimalBullet, alphaBullet, romanBullet];
+// Manually prefix algorithm step list items with hidden counter representations
+// corresponding with their markers so they get selected and copied with content.
+// We read list-style-type to avoid divergence with the style sheet, but
+// for efficiency assume that all lists at the same nesting depth use the same
+// style (except for those associated with replacement steps).
+// We also precompute some initial items for each supported style type.
+// https://w3c.github.io/csswg-drafts/css-counter-styles/
 
-function addStepNumberText(ol, parentIndex) {
-  for (let i = 0; i < ol.children.length; ++i) {
-    let child = ol.children[i];
-    let index = parentIndex.concat([i]);
-    let applicable = bullets[Math.min(index.length - 1, 5)];
-    let span = document.createElement('span');
-    span.textContent = (applicable[i] || '?') + '. ';
-    span.style.fontSize = '0';
-    span.setAttribute('aria-hidden', 'true');
-    child.prepend(span);
-    let sublist = child.querySelector('ol');
-    if (sublist != null) {
-      addStepNumberText(sublist, index);
+const lowerLetters = Array.from({ length: 26 }, (_, i) =>
+  String.fromCharCode('a'.charCodeAt(0) + i)
+);
+// Implement the lower-alpha 'alphabetic' algorithm,
+// adjusting for indexing from 0 rather than 1.
+// https://w3c.github.io/csswg-drafts/css-counter-styles/#simple-alphabetic
+// https://w3c.github.io/csswg-drafts/css-counter-styles/#alphabetic-system
+const lowerAlphaTextForIndex = i => {
+  let S = '';
+  for (const N = lowerLetters.length; i >= 0; i--) {
+    S = lowerLetters[i % N] + S;
+    i = Math.floor(i / N);
+  }
+  return S;
+};
+
+const weightedLowerRomanSymbols = Object.entries({
+  m: 1000,
+  cm: 900,
+  d: 500,
+  cd: 400,
+  c: 100,
+  xc: 90,
+  l: 50,
+  xl: 40,
+  x: 10,
+  ix: 9,
+  v: 5,
+  iv: 4,
+  i: 1,
+});
+// Implement the lower-roman 'additive' algorithm,
+// adjusting for indexing from 0 rather than 1.
+// https://w3c.github.io/csswg-drafts/css-counter-styles/#simple-numeric
+// https://w3c.github.io/csswg-drafts/css-counter-styles/#additive-system
+const lowerRomanTextForIndex = i => {
+  let value = i + 1;
+  let S = '';
+  for (const [symbol, weight] of weightedLowerRomanSymbols) {
+    if (!value) break;
+    if (weight > value) continue;
+    const reps = Math.floor(value / weight);
+    S += symbol.repeat(reps);
+    value -= weight * reps;
+  }
+  return S;
+};
+
+// Memoize pure index-to-text functions with an exposed cache for fast retrieval.
+const makeCounter = (pureGetTextForIndex, precomputeCount = 30) => {
+  const cache = Array.from({ length: precomputeCount }, (_, i) => pureGetTextForIndex(i));
+  const getTextForIndex = i => {
+    if (i >= cache.length) cache[i] = pureGetTextForIndex(i);
+    return cache[i];
+  };
+  return { getTextForIndex, cache };
+};
+
+const counterByStyle = {
+  __proto__: null,
+  decimal: makeCounter(i => String(i + 1)),
+  'lower-alpha': makeCounter(lowerAlphaTextForIndex),
+  'upper-alpha': makeCounter(i => lowerAlphaTextForIndex(i).toUpperCase()),
+  'lower-roman': makeCounter(lowerRomanTextForIndex),
+  'upper-roman': makeCounter(i => lowerRomanTextForIndex(i).toUpperCase()),
+};
+const fallbackCounter = makeCounter(() => '?');
+const counterByDepth = [];
+
+function addStepNumberText(
+  ol,
+  depth = 0,
+  special = [...ol.classList].some(c => c.startsWith('nested-'))
+) {
+  let counter = !special && counterByDepth[depth];
+  if (!counter) {
+    const counterStyle = getComputedStyle(ol)['list-style-type'];
+    counter = counterByStyle[counterStyle];
+    if (!counter) {
+      console.warn('unsupported list-style-type', {
+        ol,
+        counterStyle,
+        id: ol.closest('[id]')?.getAttribute('id'),
+      });
+      counterByStyle[counterStyle] = fallbackCounter;
+      counter = fallbackCounter;
+    }
+    if (!special) {
+      counterByDepth[depth] = counter;
     }
   }
+  const { cache, getTextForIndex } = counter;
+  let i = (Number(ol.getAttribute('start')) || 1) - 1;
+  for (const li of ol.children) {
+    const marker = document.createElement('span');
+    marker.textContent = `${i < cache.length ? cache[i] : getTextForIndex(i)}. `;
+    marker.setAttribute('aria-hidden', 'true');
+    const attributesContainer = li.querySelector('.attributes-tag');
+    if (attributesContainer == null) {
+      li.prepend(marker);
+    } else {
+      attributesContainer.insertAdjacentElement('afterend', marker);
+    }
+    for (const sublist of li.querySelectorAll(':scope > ol')) {
+      addStepNumberText(sublist, depth + 1, special);
+    }
+    i++;
+  }
 }
+
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('emu-alg > ol').forEach(ol => {
-    addStepNumberText(ol, []);
+    addStepNumberText(ol);
   });
 });
 
 let sdoMap = JSON.parse(`{}`);
-let biblio = JSON.parse(`{"refsByClause":{"sec-set-records":["_ref_0","_ref_23"],"sec-set.prototype.union":["_ref_1","_ref_2","_ref_3"],"sec-set.prototype.intersection":["_ref_4","_ref_5","_ref_6","_ref_7","_ref_8"],"sec-set.prototype.difference":["_ref_9","_ref_10","_ref_11"],"sec-set.prototype.symmetricdifference":["_ref_12","_ref_13","_ref_14","_ref_15"],"sec-set.prototype.issubsetof":["_ref_16"],"sec-set.prototype.issupersetof":["_ref_17","_ref_18","_ref_19"],"sec-set.prototype.isdisjointfrom":["_ref_20","_ref_21","_ref_22"],"sec-getsetrecord":["_ref_24","_ref_25"],"sec-getkeysiterator":["_ref_26"]},"entries":[{"type":"clause","id":"sec-set.prototype.union","title":"Set.prototype.union ( other )","titleHTML":"Set.prototype.union ( <var>other</var> )","number":"1"},{"type":"clause","id":"sec-set.prototype.intersection","title":"Set.prototype.intersection ( other )","titleHTML":"Set.prototype.intersection ( <var>other</var> )","number":"2"},{"type":"clause","id":"sec-set.prototype.difference","title":"Set.prototype.difference ( other )","titleHTML":"Set.prototype.difference ( <var>other</var> )","number":"3"},{"type":"clause","id":"sec-set.prototype.symmetricdifference","title":"Set.prototype.symmetricDifference ( other )","titleHTML":"Set.prototype.symmetricDifference ( <var>other</var> )","number":"4"},{"type":"clause","id":"sec-set.prototype.issubsetof","title":"Set.prototype.isSubsetOf ( other )","titleHTML":"Set.prototype.isSubsetOf ( <var>other</var> )","number":"5"},{"type":"clause","id":"sec-set.prototype.issupersetof","title":"Set.prototype.isSupersetOf ( other )","titleHTML":"Set.prototype.isSupersetOf ( <var>other</var> )","number":"6"},{"type":"clause","id":"sec-set.prototype.isdisjointfrom","title":"Set.prototype.isDisjointFrom ( other )","titleHTML":"Set.prototype.isDisjointFrom ( <var>other</var> )","number":"7"},{"type":"term","term":"Set Record","refId":"sec-set-records"},{"type":"table","id":"table-set-record-fields","number":1,"caption":"Table 1: Set Record Fields","referencingIds":["_ref_0"]},{"type":"clause","id":"sec-set-records","titleHTML":"Set Records","number":"8","referencingIds":["_ref_23","_ref_24","_ref_25","_ref_26"]},{"type":"op","aoid":"GetSetRecord","refId":"sec-getsetrecord"},{"type":"clause","id":"sec-getsetrecord","title":"GetSetRecord ( obj )","titleHTML":"GetSetRecord ( <var>obj</var> )","number":"9","referencingIds":["_ref_1","_ref_4","_ref_9","_ref_12","_ref_16","_ref_17","_ref_20"]},{"type":"op","aoid":"GetKeysIterator","refId":"sec-getkeysiterator"},{"type":"clause","id":"sec-getkeysiterator","title":"GetKeysIterator ( setRec )","titleHTML":"GetKeysIterator ( <var>setRec</var> )","number":"10","referencingIds":["_ref_2","_ref_6","_ref_10","_ref_13","_ref_18","_ref_21"]},{"type":"op","aoid":"SetDataHas","refId":"sec-setdatahas"},{"type":"clause","id":"sec-setdatahas","title":"SetDataHas ( resultSetData, value )","titleHTML":"SetDataHas ( <var>resultSetData</var>, <var>value</var> )","number":"11","referencingIds":["_ref_3","_ref_5","_ref_7","_ref_8","_ref_11","_ref_14","_ref_15","_ref_19","_ref_22"]},{"type":"clause","id":"sec-copyright-and-software-license","title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A"}]}`);
+let biblio = JSON.parse(`{"refsByClause":{"sec-set-records":["_ref_0","_ref_17"],"sec-set.prototype.union":["_ref_1","_ref_2"],"sec-set.prototype.intersection":["_ref_3","_ref_4","_ref_5","_ref_6"],"sec-set.prototype.difference":["_ref_7","_ref_8"],"sec-set.prototype.symmetricdifference":["_ref_9","_ref_10","_ref_11"],"sec-set.prototype.issubsetof":["_ref_12"],"sec-set.prototype.issupersetof":["_ref_13","_ref_14"],"sec-set.prototype.isdisjointfrom":["_ref_15","_ref_16"],"sec-getsetrecord":["_ref_18","_ref_19"]},"entries":[{"type":"clause","id":"sec-set.prototype.union","title":"Set.prototype.union ( other )","titleHTML":"Set.prototype.union ( <var>other</var> )","number":"1"},{"type":"clause","id":"sec-set.prototype.intersection","title":"Set.prototype.intersection ( other )","titleHTML":"Set.prototype.intersection ( <var>other</var> )","number":"2"},{"type":"clause","id":"sec-set.prototype.difference","title":"Set.prototype.difference ( other )","titleHTML":"Set.prototype.difference ( <var>other</var> )","number":"3"},{"type":"clause","id":"sec-set.prototype.symmetricdifference","title":"Set.prototype.symmetricDifference ( other )","titleHTML":"Set.prototype.symmetricDifference ( <var>other</var> )","number":"4"},{"type":"clause","id":"sec-set.prototype.issubsetof","title":"Set.prototype.isSubsetOf ( other )","titleHTML":"Set.prototype.isSubsetOf ( <var>other</var> )","number":"5"},{"type":"clause","id":"sec-set.prototype.issupersetof","title":"Set.prototype.isSupersetOf ( other )","titleHTML":"Set.prototype.isSupersetOf ( <var>other</var> )","number":"6"},{"type":"clause","id":"sec-set.prototype.isdisjointfrom","title":"Set.prototype.isDisjointFrom ( other )","titleHTML":"Set.prototype.isDisjointFrom ( <var>other</var> )","number":"7"},{"type":"term","term":"Set Record","refId":"sec-set-records"},{"type":"table","id":"table-set-record-fields","number":1,"caption":"Table 1: Set Record Fields","referencingIds":["_ref_0"]},{"type":"clause","id":"sec-set-records","titleHTML":"Set Records","number":"8","referencingIds":["_ref_17","_ref_18","_ref_19"]},{"type":"op","aoid":"GetSetRecord","refId":"sec-getsetrecord"},{"type":"clause","id":"sec-getsetrecord","title":"GetSetRecord ( obj )","titleHTML":"GetSetRecord ( <var>obj</var> )","number":"9","referencingIds":["_ref_1","_ref_3","_ref_7","_ref_9","_ref_12","_ref_13","_ref_15"]},{"type":"op","aoid":"SetDataHas","refId":"sec-setdatahas"},{"type":"clause","id":"sec-setdatahas","title":"SetDataHas ( resultSetData, value )","titleHTML":"SetDataHas ( <var>resultSetData</var>, <var>value</var> )","number":"10","referencingIds":["_ref_2","_ref_4","_ref_5","_ref_6","_ref_8","_ref_10","_ref_11","_ref_14","_ref_16"]},{"type":"clause","id":"sec-copyright-and-software-license","title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A"}]}`);
 ;let usesMultipage = false
