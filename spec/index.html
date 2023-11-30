@@ -85,11 +85,11 @@ markEffects: true
       1. Let _index_ be 0.
       1. Repeat, while _index_ &lt; _thisSize_,
         1. Let _e_ be _resultSetData_[_index_].
-        1. Set _index_ to _index_ + 1.
         1. If _e_ is not ~empty~, then
           1. Let _inOther_ be ToBoolean(? Call(_otherRec_.[[Has]], _otherRec_.[[Set]], « _e_ »)).
           1. If _inOther_ is *true*, then
             1. Set _resultSetData_[_index_] to ~empty~.
+        1. Set _index_ to _index_ + 1.
     1. Else,
       1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
       1. Let _next_ be *true*.
