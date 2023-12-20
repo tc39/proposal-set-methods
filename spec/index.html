@@ -124,7 +124,7 @@ markEffects: true
         1. If _nextValue_ is *-0*<sub>𝔽</sub>, set _nextValue_ to *+0*<sub>𝔽</sub>.
         1. Let _resultIndex_ be SetDataIndex(_resultSetData_, _nextValue_).
         1. If SetDataHas(_O_.[[SetData]], _nextValue_) is *true*, then
-          1. If _resultIndex_ is not ~missing~, set _resultSetData_[_valueIndex_] to ~empty~.
+          1. If _resultIndex_ is not ~missing~, set _resultSetData_[_resultIndex_] to ~empty~.
         1. Else,
           1. If _resultIndex_ is ~missing~, append _nextValue_ to _resultSetData_.
     1. Let _result_ be OrdinaryObjectCreate(%Set.prototype%, « [[SetData]] »).
