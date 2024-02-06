@@ -38,8 +38,8 @@ markEffects: true
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _resultSetData_ be a new empty List.
-    1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
-    1. If _thisSize_ ≤ _otherRec_.[[Size]], then
+    1. If SetDataSize(_O_.[[SetData]]) ≤ _otherRec_.[[Size]], then
+      1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
       1. Let _index_ be 0.
       1. Repeat, while _index_ &lt; _thisSize_,
         1. Let _e_ be _O_.[[SetData]][_index_].
@@ -80,8 +80,8 @@ markEffects: true
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
     1. Let _resultSetData_ be a copy of _O_.[[SetData]].
-    1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
-    1. If _thisSize_ ≤ _otherRec_.[[Size]], then
+    1. If SetDataSize(_O_.[[SetData]]) ≤ _otherRec_.[[Size]], then
+      1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
       1. Let _index_ be 0.
       1. Repeat, while _index_ &lt; _thisSize_,
         1. Let _e_ be _resultSetData_[_index_].
@@ -139,8 +139,8 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
+    1. If SetDataSize(_O_.[[SetData]]) > _otherRec_.[[Size]], return *false*.
     1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
-    1. If _thisSize_ > _otherRec_.[[Size]], return *false*.
     1. Let _index_ be 0.
     1. Repeat, while _index_ &lt; _thisSize_,
       1. Let _e_ be _O_.[[SetData]][_index_].
@@ -161,8 +161,7 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
-    1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
-    1. If _thisSize_ &lt; _otherRec_.[[Size]], return *false*.
+    1. If SetDataSize(_O_.[[SetData]]) &lt; _otherRec_.[[Size]], return *false*.
     1. Let _keysIter_ be ? GetIteratorFromMethod(_otherRec_.[[Set]], _otherRec_.[[Keys]]).
     1. Let _next_ be *true*.
     1. Repeat, while _next_ is not *false*,
@@ -183,8 +182,8 @@ markEffects: true
     1. Let _O_ be the *this* value.
     1. Perform ? RequireInternalSlot(_O_, [[SetData]]).
     1. Let _otherRec_ be ? GetSetRecord(_other_).
-    1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
-    1. If _thisSize_ ≤ _otherRec_.[[Size]], then
+    1. If SetDataSize(_O_.[[SetData]]) ≤ _otherRec_.[[Size]], then
+      1. Let _thisSize_ be the number of elements in _O_.[[SetData]].
       1. Let _index_ be 0.
       1. Repeat, while _index_ &lt; _thisSize_,
         1. Let _e_ be _O_.[[SetData]][_index_].
@@ -310,5 +309,21 @@ markEffects: true
     1. For each element _e_ of _resultSetData_, do
       1. If _e_ is not ~empty~ and SameValueZero(_e_, _value_) is *true*, return *true*.
     1. Return *false*.
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-setdatasize" type="abstract operation">
+  <h1>
+    SetDataSize (
+      _setData_: a List of either ~empty~ or ECMAScript language values,
+    ): a non-negative integer
+  </h1>
+  <dl class="header">
+  </dl>
+  <emu-alg>
+    1. Let _count_ be 0.
+    1. For each element _e_ of _setData_, do
+      1. If _e_ is not ~empty~, set _count_ to _count_ + 1.
+    1. Return _count_.
   </emu-alg>
 </emu-clause>
